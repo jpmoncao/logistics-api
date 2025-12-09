@@ -1,4 +1,5 @@
-import { Entrega } from "../../domain/entities/entrega.entity";
+import { BaseUseCase } from "../../core/base/usecase";
+
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 
 interface DespacharEntregaRequest {
@@ -9,8 +10,8 @@ interface DespacharEntregaResponse {
     message: string;
 }
 
-export class DespacharEntregaUseCase {
-    constructor(private entregaRepository: EntregaRepository) { }
+export class DespacharEntregaUseCase extends BaseUseCase<DespacharEntregaRequest, DespacharEntregaResponse> {
+    constructor(private entregaRepository: EntregaRepository) { super() }
 
     async execute(request: DespacharEntregaRequest): Promise<DespacharEntregaResponse> {
         const entrega = await this.entregaRepository.findById(request.entregaId);

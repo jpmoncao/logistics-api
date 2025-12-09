@@ -1,3 +1,5 @@
+import { BaseUseCase } from "../../core/base/usecase";
+
 import { Entrega } from "../../domain/entities/entrega.entity";
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 import { StatusEntrega } from "../../domain/types/entrega";
@@ -10,8 +12,8 @@ interface CreateEntregaResponse {
     entregaId: string;
 }
 
-export class CreateEntregaUseCase {
-    constructor(private entregaRepository: EntregaRepository) { }
+export class CreateEntregaUseCase extends BaseUseCase<CreateEntregaRequest, CreateEntregaResponse> {
+    constructor(private entregaRepository: EntregaRepository) { super() }
 
     async execute(request: CreateEntregaRequest): Promise<CreateEntregaResponse> {
         const entrega = new Entrega({
