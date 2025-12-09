@@ -18,16 +18,22 @@ export abstract class BaseController {
         })
     }
 
-    protected ok<T>(res: Response, dto?: T) {
+    protected ok<T>(res: Response, message: string, dto?: T) {
         if (!!dto) {
-            return res.status(200).json(dto);
+            return res.status(200).json({
+                message,
+                data: dto ?? []
+            });
         } else {
             return res.sendStatus(200);
         }
     }
 
-    protected created(res: Response) {
-        return res.sendStatus(201);
+    protected created<T>(res: Response, message: string, dto?: T) {
+        return res.sendStatus(201).json({
+            message,
+            data: dto ?? []
+        });
     }
 
     protected clientError(res: Response, message?: string) {

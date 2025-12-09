@@ -18,7 +18,7 @@ export class DespacharEntregaController extends BaseController {
 
             await this.despacharEntregaUseCase.execute({ entregaId: id });
 
-            return this.ok(res, { message: 'Pedido saiu para entrega!' });
+            return this.ok(res, 'Pedido saiu para entrega.');
         } catch (error) {
             this.analyzeError(res, error)
         }

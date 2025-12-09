@@ -18,7 +18,7 @@ export class CreateEntregaController extends BaseController {
 
             await this.createEntregaUseCase.execute({ status });
 
-            return this.created(res);
+            return this.created(res, "Entrega criada com sucesso!");
         } catch (error) {
             this.analyzeError(res, error)
         }
