@@ -1,6 +1,6 @@
 import express from "express";
 import cors from 'cors';
-import { entregasRouter } from "./infra/http/routers/entregas";
+import { entregasRouter } from "./infra/http/routers/entrega.router";
 
 // Configurações da API
 const PORT = '5000';

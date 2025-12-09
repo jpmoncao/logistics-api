@@ -1,7 +1,7 @@
-import { UniqueEntityID } from '../../core/entities/unique-entity-id';
+import { UniqueEntityID } from '../../core/entities/unique-entity-id.entity';
 import { StatusEntrega } from "../types/entrega";
 
-import { Movimentacao } from "./movimentacao";
+import { Movimentacao } from "./movimentacao.entity";
 
 interface EntregaProps {
     status: StatusEntrega,

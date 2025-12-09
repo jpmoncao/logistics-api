@@ -1,9 +1,9 @@
 import { Prisma, Entrega as PrismaEntrega, StatusEntrega as PrismaStatusEntrega, Movimentacao as PrismaMovimentacao } from "@prisma/client";
 
-import { Movimentacao } from "../../../../domain/entities/movimentacao";
-import { Entrega } from "../../../../domain/entities/entrega";
+import { Movimentacao } from "../../../../domain/entities/movimentacao.entity";
+import { Entrega } from "../../../../domain/entities/entrega.entity";
 
-import { StatusEntrega } from "../../../../core/types/entrega";
+import { StatusEntrega } from "../../../../domain/types/entrega";
 
 type PrismaEntregaDetalhada = PrismaEntrega & {
     movimentacoes: PrismaMovimentacao[];

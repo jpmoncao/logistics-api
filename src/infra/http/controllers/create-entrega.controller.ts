@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import z from 'zod';
 
-import { CreateEntregaUseCase } from "../../../application/use-cases/create-entrega";
+import { CreateEntregaUseCase } from "../../../application/use-cases/create-entrega.usecase";
 
-import HttpStatusCode from "../../../infra/http/utils/status-code"
+import HttpStatusCode from "../utils/status-code"
 import { StatusEntrega } from '../../../domain/types/entrega';
 
 

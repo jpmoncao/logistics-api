@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { EntregaRepository } from "../../../../domain/repos/entrega";
-import { Entrega } from "../../../../domain/entities/entrega";
-import { PrismaEntregaMapper } from "../mappers/prisma-entrega-mapper";
+import { EntregaRepository } from "../../../../domain/repositories/entrega.repository";
+import { Entrega } from "../../../../domain/entities/entrega.entity";
+import { PrismaEntregaMapper } from "../mappers/prisma-entrega.mapper";
 
 export class PrismaEntregaRepository implements EntregaRepository {
     constructor(private prisma: PrismaClient) { }

@@ -1,6 +1,6 @@
-import { Entrega } from "../../domain/entities/entrega";
-import { EntregaRepository } from "../../domain/repos/entrega";
-import { StatusEntrega } from "../../core/types/entrega";
+import { Entrega } from "../../domain/entities/entrega.entity";
+import { EntregaRepository } from "../../domain/repositories/entrega.repository";
+import { StatusEntrega } from "../../domain/types/entrega";
 
 interface CreateEntregaRequest {
     status?: StatusEntrega;
