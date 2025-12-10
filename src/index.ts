@@ -1,6 +1,10 @@
+import dotenv from 'dotenv'
 import express from "express";
 import cors from 'cors';
+
 import { entregasRouter } from "./infra/http/routers/entrega.router";
+
+dotenv.config();
 
 // Configurações da API
 const PORT = '5000';
