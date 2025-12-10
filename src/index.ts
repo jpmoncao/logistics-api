@@ -4,10 +4,11 @@ import cors from 'cors';
 
 import { entregasRouter } from "./infra/http/routers/entrega.router";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 // Configurações da API
-const PORT = '5000';
+const PORT = process.env.API_PORT ?? '5000';
+const API_URL = 'http://localhost:' + PORT;
 
 // Instância do Express
 const app = express();
@@ -21,5 +22,5 @@ app.use('/entregas', entregasRouter);
 
 app.listen(
     PORT,
-    () => { console.log('API is running: http://localhost:' + PORT) }
+    () => { console.log('API is running: ' + API_URL) }
 );
