@@ -9,6 +9,6 @@ const createEntregaController = createEntregaFactory();
 const despacharEntregaController = despacharEntregaFactory();
 
 entregasRouter.post("/", createEntregaController.handle);
-entregasRouter.patch("/:entregaId/despachar", despacharEntregaController.handle)
+entregasRouter.patch("/:id/despachar", despacharEntregaController.handle)
 
 export { entregasRouter };
