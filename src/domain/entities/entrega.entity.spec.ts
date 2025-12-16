@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Entrega } from './entrega.entity';
 import { StatusEntrega } from '../types/entrega';
 import { DomainRuleError } from '../../core/errors/domain-rule.error';
+import { EntregaDespachadaEvent } from '../events/entrega-despachada.event';
 
 describe('Entrega Entity', () => {
 
@@ -24,6 +25,16 @@ describe('Entrega Entity', () => {
         expect(entrega.status).toEqual(StatusEntrega.CAMINHO);
         expect(entrega.movimentacoes.length).toBe(1);
         expect(entrega.movimentacoes[0].props.descricao).toEqual('O pedido saiu para entrega!');
+    });
+
+    it('deve adicionar um EntregaDespachadaEvent ao despachar a entrega', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.PENDENTE
+        });
+
+        entrega.despachar();
+
+        expect(entrega.domainEvents[0].eventName).toEqual(EntregaDespachadaEvent.eventName);
     });
 
     it('deve lançar DomainRuleError quando despachar uma entrega que não está pendente', () => {
