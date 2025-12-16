@@ -10,8 +10,6 @@ export abstract class BaseUseCase<IRequest, IResponse> {
         if (!this.dispatcher)
             throw new Error('Use case não possui um dispatcher declarado.');
 
-        console.log(events);
-
         for (const event of events) {
             try {
                 await this.dispatcher.dispatch(event);
