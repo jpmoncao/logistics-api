@@ -4,8 +4,10 @@ import { AggregateRoot } from "../../core/entities/aggregate-root";
 
 import { Movimentacao } from "./movimentacao.entity";
 
-import { StatusEntrega } from "../types/entrega";
 import { EntregaDespachadaEvent } from "../events/entrega-despachada.event";
+import { EntregaConcluidaEvent } from "../events/entrega-concluida.event";
+
+import { StatusEntrega } from "../types/entrega";
 
 interface EntregaProps {
     status: StatusEntrega,
@@ -41,5 +43,15 @@ export class Entrega extends AggregateRoot {
         this.criarMovimentacao('O pedido saiu para entrega!');
 
         this.addEvent(new EntregaDespachadaEvent(this));
+    }
+
+    public concluirEntrega() {
+        if (this._status != StatusEntrega.CAMINHO)
+            throw new DomainRuleError('Apenas entregas com status "CAMINHO" pode ser concluídas.');
+
+        this._status = StatusEntrega.CONCLUIDO;
+        this.criarMovimentacao('A entrega do pedido foi concluída!');
+
+        this.addEvent(new EntregaConcluidaEvent(this));
     }
 }

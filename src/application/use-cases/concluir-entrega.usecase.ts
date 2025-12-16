@@ -1,24 +1,25 @@
 import { BaseUseCase } from "../../core/base/usecase";
-import { ResourceNotFoundError } from '../../core/errors/resource-not-found.error'
 import { DomainEventDispatcher } from "../../core/events/dispatcher";
 
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 
-interface DespacharEntregaRequest {
+import { ResourceNotFoundError } from "../../core/errors/resource-not-found.error";
+
+interface ConcluirEntregaRequest {
     entregaId: string;
 }
 
-export class DespacharEntregaUseCase extends BaseUseCase<DespacharEntregaRequest, void> {
+export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, void> {
     constructor(private entregaRepository: EntregaRepository, dispatcher: DomainEventDispatcher) {
         super(dispatcher);
     }
 
-    async execute(request: DespacharEntregaRequest): Promise<void> {
+    async execute(request: ConcluirEntregaRequest): Promise<void> {
         const entrega = await this.entregaRepository.findById(request.entregaId);
         if (!entrega)
             throw new ResourceNotFoundError('Entrega');
 
-        entrega.despachar();
+        entrega.concluirEntrega();
 
         await this.entregaRepository.save(entrega);
 
