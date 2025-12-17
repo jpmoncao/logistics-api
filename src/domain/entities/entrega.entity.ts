@@ -28,11 +28,11 @@ export class Entrega extends AggregateRoot {
 
     get id() { return this._id.toString() };
     get status() { return this._status };
-    get movimentacoes() { return this._movimentacoes };
+    get movimentacoes() { return [...this._movimentacoes] };
 
     public criarMovimentacao(descricao: string) {
         const movimentacao = new Movimentacao(descricao)
-        this.movimentacoes.push(movimentacao);
+        this._movimentacoes.push(movimentacao);
     }
 
     public despachar() {
