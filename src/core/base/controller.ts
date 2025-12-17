@@ -35,18 +35,14 @@ export abstract class BaseController {
     }
 
     protected ok<T>(res: Response, message: string, dto?: T) {
-        if (!!dto) {
-            return res.status(HttpStatusCode.OK).json({
-                message,
-                data: dto ?? []
-            });
-        } else {
-            return res.sendStatus(HttpStatusCode.OK);
-        }
+        return res.status(HttpStatusCode.OK).json({
+            message,
+            data: dto ?? []
+        });
     }
 
     protected created<T>(res: Response, message: string, dto?: T) {
-        return res.sendStatus(HttpStatusCode.CREATED).json({
+        return res.status(HttpStatusCode.CREATED).json({
             message,
             data: dto ?? []
         });
