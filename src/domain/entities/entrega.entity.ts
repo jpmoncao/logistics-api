@@ -15,9 +15,13 @@ interface EntregaProps {
 }
 
 export class Entrega extends AggregateRoot {
+    [x: string]: any;
     private _id: UniqueEntityID;
     private _status: StatusEntrega;
     private _movimentacoes: Movimentacao[];
+    entrega: any;
+    entrega: any;
+    entrega: any;
 
     constructor(props: EntregaProps, id?: string) {
         super();
