@@ -1,6 +1,6 @@
 import { prisma } from "../database/prisma/client";
 import { PrismaEntregaRepository } from "../database/prisma/repositories/prisma-entrega.repository"
-import { AtualizarLocalizacaoEntregaUseCase } from "../../application/use-cases/atualizar-localizacao-entrega.use-case";
+import { AtualizarLocalizacaoEntregaUseCase } from "../../application/use-cases/atualizar-localizacao-entrega.usecase";
 import { AtualizarLocalizacaoEntregaController } from "../http/controllers/atualizar-localizacao-entrega.controller";
 
 export function atualizarLocalizacaoEntregaFactory(): AtualizarLocalizacaoEntregaController {

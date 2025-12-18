@@ -58,6 +58,9 @@ export class Entrega extends AggregateRoot {
         if (this._status != StatusEntrega.PENDENTE)
             throw new DomainRuleError('Apenas entregas com status "PENDENTE" podem ser despachadas.');
 
+        if (!this._entregadorId)
+            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
+
         this._localizacaoAtual = new Coordenada(latitude, longitude);
 
         this._status = StatusEntrega.CAMINHO;
@@ -69,6 +72,9 @@ export class Entrega extends AggregateRoot {
     public concluirEntrega() {
         if (this._status != StatusEntrega.CAMINHO)
             throw new DomainRuleError('Apenas entregas com status "CAMINHO" pode ser concluídas.');
+
+        if (!this._entregadorId)
+            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
 
         this._localizacaoAtual = new Coordenada(this.destino.latitude, this.destino.longitude);
 
@@ -97,5 +103,9 @@ export class Entrega extends AggregateRoot {
             throw new DomainRuleError('A localização atual da entrega não foi definida.');
 
         return this._localizacaoAtual.calcularDistancia(this._destino);
+    }
+
+    public atribuirEntregador(entregadorId: string) {
+        this._entregadorId = entregadorId;
     }
 }

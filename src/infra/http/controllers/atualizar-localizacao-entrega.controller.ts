@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import z from 'zod';
 
 import { BaseController } from '../../../core/base/controller'
-import { AtualizarLocalizacaoEntregaUseCase } from '../../../application/use-cases/atualizar-localizacao-entrega.use-case'
+import { AtualizarLocalizacaoEntregaUseCase } from '../../../application/use-cases/atualizar-localizacao-entrega.usecase'
 
 
 const atualizarLocalizacaoEntregaParamsSchema = z.object({

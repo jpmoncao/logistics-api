@@ -10,6 +10,7 @@ const despacharEntregaParamsSchema = z.object({
 });
 
 const despacharEntregaBodySchema = z.object({
+    entregadorId: z.uuid({ message: 'Id da entregador não informado!' }),
     latitude: z.number({ message: 'Latitude não informada!' }),
     longitude: z.number({ message: 'Longitude não informada!' })
 });
@@ -20,9 +21,9 @@ export class DespacharEntregaController extends BaseController {
     handle = async (req: Request, res: Response) => {
         try {
             const { id } = despacharEntregaParamsSchema.parse(req.params);
-            const { latitude, longitude } = despacharEntregaBodySchema.parse(req.body);
+            const { entregadorId, latitude, longitude } = despacharEntregaBodySchema.parse(req.body);
 
-            await this.despacharEntregaUseCase.execute({ entregaId: id, latitude, longitude });
+            await this.despacharEntregaUseCase.execute({ entregaId: id, entregadorId, latitude, longitude });
 
             return this.ok(res, 'Pedido saiu para entrega.');
         } catch (error) {
