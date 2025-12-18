@@ -22,6 +22,17 @@ describe('Entrega Entity', () => {
         expect(entrega.id).toBeDefined();
     });
 
+    it('deve criar a entrega informando as coordenadas de destino', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.PENDENTE,
+            destino: coordenadaDestinoFake
+        });
+
+        expect(entrega.destino.latitude).toEqual(1);
+        expect(entrega.destino.longitude).toEqual(1);
+        expect(entrega.id).toBeDefined();
+    });
+
     it('deve mudar o status para CAMINHO ao despachar', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
@@ -58,7 +69,7 @@ describe('Entrega Entity', () => {
 
         entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
 
-        expect(entrega.domainEvents[0].eventName).toEqual(EntregaDespachadaEvent.eventName);
+        expect(entrega.domainEvents[0].eventName).toEqual('EntregaDespachada');
     });
 
     it('deve atualizar a localização atual da entrega ao despachar a entrega', () => {
@@ -111,7 +122,7 @@ describe('Entrega Entity', () => {
 
         entrega.concluirEntrega();
 
-        expect(entrega.domainEvents[0].eventName).toEqual(EntregaConcluidaEvent.eventName);
+        expect(entrega.domainEvents[0].eventName).toEqual('EntregaConcluida');
     });
 
     it('deve adicionar uma movimetação com coordenadas caso haja uma atualização de posição', () => {
@@ -169,5 +180,42 @@ describe('Entrega Entity', () => {
         expect(() => {
             entrega.atualizarLocalizacaoAtual((coordenadaOrigemFake.latitude), (coordenadaOrigemFake.longitude));
         }).toThrow('Não houve atualizações significativas no percurso dessa entrega.');
+    });
+
+    it('deve atualizar a localização atual da entrega ao atualizar a localização', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.CAMINHO,
+            localizacaoAtual: coordenadaOrigemFake,
+            destino: coordenadaDestinoFake
+        });
+
+        entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+
+        expect(entrega.localizacaoAtual?.latitude).toEqual(0);
+        expect(entrega.localizacaoAtual?.longitude).toEqual(0);
+    });
+
+    it('deve atualizar a localização atual da entrega ao despachar a entrega', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.PENDENTE,
+            destino: coordenadaDestinoFake
+        });
+
+        entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+        expect(entrega.localizacaoAtual?.latitude).toEqual(0);
+        expect(entrega.localizacaoAtual?.longitude).toEqual(0);
+    });
+
+    it('deve atualizar a localização atual da entrega ao concluir a entrega', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.CAMINHO,
+            movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
+            destino: coordenadaDestinoFake
+        }, 'test_id');
+
+        entrega.concluirEntrega();
+
+        expect(entrega.localizacaoAtual?.latitude).toEqual(1);
+        expect(entrega.localizacaoAtual?.longitude).toEqual(1);
     });
 });

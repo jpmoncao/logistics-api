@@ -11,8 +11,6 @@ describe('Coordenada Value Object', () => {
 
         const distanciaEmKm = coordenadaSP.calcularDistancia(coordenadaRJ);
 
-        console.log('Distância calculada:', distanciaEmKm);
-
         expect(distanciaEmKm).toBeGreaterThan(360);
         expect(distanciaEmKm).toBeLessThan(380);
     })
