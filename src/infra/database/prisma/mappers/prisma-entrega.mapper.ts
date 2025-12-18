@@ -15,6 +15,8 @@ export class PrismaEntregaMapper {
         return {
             id: entrega.id,
             status: entrega.status as unknown as PrismaStatusEntrega,
+            latitude_destino: entrega.destino.latitude,
+            longitude_destino: entrega.destino.longitude,
             movimentacoes: {
                 create: entrega.movimentacoes.map((movimentacao: Movimentacao) => {
                     return {
@@ -36,6 +38,7 @@ export class PrismaEntregaMapper {
         const entrega = new Entrega(
             {
                 status: raw.status as unknown as StatusEntrega,
+                destino: new Coordenada(raw.latitude_destino, raw.longitude_destino),
                 movimentacoes: raw.movimentacoes.map(
                     (movRaw) => new Movimentacao({
                         descricao: movRaw.descricao,

@@ -14,10 +14,12 @@ enum StatusEntrega {
 }
 
 model Entrega {
-  id        String        @id
-  status    StatusEntrega @default(PENDENTE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id                String        @id
+  status            StatusEntrega @default(PENDENTE)
+  latitude_destino  Float
+  longitude_destino Float
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   // Relacionamento 1:N
   movimentacoes Movimentacao[]

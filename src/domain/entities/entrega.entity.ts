@@ -14,6 +14,7 @@ interface EntregaProps {
     status: StatusEntrega;
     movimentacoes?: Movimentacao[];
     localizacaoAtual?: Coordenada;
+    destino: Coordenada;
 }
 
 export class Entrega extends AggregateRoot {
@@ -21,6 +22,7 @@ export class Entrega extends AggregateRoot {
     private _status: StatusEntrega;
     private _movimentacoes: Movimentacao[];
     private _localizacaoAtual?: Coordenada;
+    private _destino: Coordenada;
 
     constructor(props: EntregaProps, id?: string) {
         super();
@@ -28,12 +30,14 @@ export class Entrega extends AggregateRoot {
         this._status = props.status || StatusEntrega.PENDENTE;
         this._movimentacoes = props.movimentacoes || [];
         this._localizacaoAtual = props.localizacaoAtual;
+        this._destino = props.destino;
     }
 
     get id() { return this._id.toString() };
     get status() { return this._status };
     get movimentacoes() { return [...this._movimentacoes] };
     get localizacaoAtual() { return this._localizacaoAtual };
+    get destino() { return this._destino };
 
     private criarMovimentacaoEntrega(descricao: string) {
         const movimentacao = new Movimentacao({
@@ -60,6 +64,8 @@ export class Entrega extends AggregateRoot {
         if (this._status != StatusEntrega.CAMINHO)
             throw new DomainRuleError('Apenas entregas com status "CAMINHO" pode ser concluídas.');
 
+        this._localizacaoAtual = new Coordenada(this.destino.latitude, this.destino.longitude);
+
         this._status = StatusEntrega.CONCLUIDO;
         this.criarMovimentacaoEntrega('A entrega do pedido foi concluída!');
 
@@ -77,6 +83,13 @@ export class Entrega extends AggregateRoot {
 
         this._localizacaoAtual = coordenada;
 
-        this.criarMovimentacaoEntrega(`A pedido está na coordenada (${this._localizacaoAtual.latitude}, ${this._localizacaoAtual.longitude}).`);
+        this.criarMovimentacaoEntrega(`O pedido está a ${this.calcularDistanciaAtualParaDestino()} km do destino.`);
+    }
+
+    private calcularDistanciaAtualParaDestino() {
+        if (!this._localizacaoAtual)
+            throw new DomainRuleError('A localização atual da entrega não foi definida.');
+
+        return this._localizacaoAtual.calcularDistancia(this._destino);
     }
 }

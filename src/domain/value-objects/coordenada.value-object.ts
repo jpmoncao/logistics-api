@@ -29,6 +29,6 @@ export class Coordenada {
 
         const distance = haversineDistance(this._latitude, this._longitude, para.latitude, para.longitude);
 
-        return distance.toLocaleString('pt-BR', { style: 'unit', unit: 'kilometer', maximumFractionDigits: 1 });
+        return parseFloat(distance.toLocaleString('pt-BR', { style: 'unit', unit: 'kilometer', maximumFractionDigits: 1 }));
     }
 }

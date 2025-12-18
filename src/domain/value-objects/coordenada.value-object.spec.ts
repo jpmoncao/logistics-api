@@ -5,13 +5,15 @@ import { ValidationError } from "../../core/errors/validation.error";
 import { Coordenada } from "./coordenada.value-object";
 
 describe('Coordenada Value Object', () => {
-    it('deve devolver o valor de x KM ao calcular a distância entre São Paulo e Rio de Janeiro', () => {
+    it('deve devolver um valor de aproximadamente 378 KM ao calcular a distância entre São Paulo e Rio de Janeiro', () => {
         const coordenadaSP = new Coordenada(-23.55, -46.63);
         const coordenadaRJ = new Coordenada(-22.54, -43.10);
 
         const distanciaEmKm = coordenadaSP.calcularDistancia(coordenadaRJ);
 
-        expect(distanciaEmKm).toBeGreaterThan(350);
+        console.log('Distância calculada:', distanciaEmKm);
+
+        expect(distanciaEmKm).toBeGreaterThan(360);
         expect(distanciaEmKm).toBeLessThan(380);
     })
 
