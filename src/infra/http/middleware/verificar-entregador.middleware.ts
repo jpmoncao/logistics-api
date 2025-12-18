@@ -16,24 +16,30 @@ const JwtTokenParser = z.object({
     role: z.enum(UserRole).optional()
 });
 
+const INVALID_TOKEN_MESSAGE = 'Token de autenticação inválido.';
+
 const verificarEntregadorMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers;
     if (!authorization)
-        return res.status(401).json({ message: 'Token de autenticação não fornecido.' });
+        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
 
     const token = authorization.split('Bearer ')[1];
     if (!token)
-        return res.status(401).json({ message: 'Token de autenticação inválido.' });
+        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
 
-    const decrypter = new JwtDecrypter();
-    const payload = await decrypter.decrypt<JwtTokenPayload>(token);
+    try {
+        const decrypter = new JwtDecrypter();
+        const payload = await decrypter.decrypt<JwtTokenPayload>(token);
 
-    if (!payload)
-        return res.status(401).json({ message: 'Token de autenticação inválido.' });
+        if (!payload)
+            return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
 
-    const { sub, role } = JwtTokenParser.parse(payload);
+        const { sub, role } = JwtTokenParser.parse(payload);
 
-    req.user = { id: sub, role };
+        req.user = { id: sub, role };
+    } catch (error) {
+        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
+    }
 
     next();
 }
