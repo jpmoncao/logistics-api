@@ -15,6 +15,7 @@ interface EntregaProps {
     movimentacoes?: Movimentacao[];
     localizacaoAtual?: Coordenada;
     destino: Coordenada;
+    entregadorId?: string;
 }
 
 export class Entrega extends AggregateRoot {
@@ -23,6 +24,7 @@ export class Entrega extends AggregateRoot {
     private _movimentacoes: Movimentacao[];
     private _localizacaoAtual?: Coordenada;
     private _destino: Coordenada;
+    private _entregadorId?: string;
 
     constructor(props: EntregaProps, id?: string) {
         super();
@@ -31,6 +33,9 @@ export class Entrega extends AggregateRoot {
         this._movimentacoes = props.movimentacoes || [];
         this._localizacaoAtual = props.localizacaoAtual;
         this._destino = props.destino;
+
+        // Relacionamento com Entregador (opcional)
+        this._entregadorId = props.entregadorId;
     }
 
     get id() { return this._id.toString() };
@@ -38,6 +43,7 @@ export class Entrega extends AggregateRoot {
     get movimentacoes() { return [...this._movimentacoes] };
     get localizacaoAtual() { return this._localizacaoAtual };
     get destino() { return this._destino };
+    get entregadorId() { return this._entregadorId };
 
     private criarMovimentacaoEntrega(descricao: string) {
         const movimentacao = new Movimentacao({

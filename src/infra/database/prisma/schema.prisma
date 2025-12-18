@@ -14,12 +14,21 @@ enum StatusEntrega {
 }
 
 model Entrega {
-  id                String        @id
-  status            StatusEntrega @default(PENDENTE)
+  id     String        @id
+  status StatusEntrega @default(PENDENTE)
+
   latitude_destino  Float
   longitude_destino Float
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
+
+  latitude_atual  Float?
+  longitude_atual Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Chave Estrangeira (Opcional - Pode nascer sem dono)
+  entregadorId String?
+  entregador   Entregador? @relation(fields: [entregadorId], references: [id], onDelete: SetNull)
 
   // Relacionamento 1:N
   movimentacoes Movimentacao[]
@@ -31,6 +40,8 @@ model Movimentacao {
   id        String   @id @default(uuid())
   descricao String
   data      DateTime
+
+  // Value Object Coordenada (Opcional)
   latitude  Float?
   longitude Float?
 
@@ -39,4 +50,21 @@ model Movimentacao {
   entrega   Entrega @relation(fields: [entregaId], references: [id], onDelete: Cascade)
 
   @@map("movimentacoes")
+}
+
+model Entregador {
+  id       String @id @default(uuid())
+  nome     String
+  cpf      String @unique
+  email    String @unique
+  telefone String @unique
+  senha    String 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento 1:N
+  entregas Entrega[]
+
+  @@map("entregadores")
 }
