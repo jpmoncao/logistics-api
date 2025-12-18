@@ -3,6 +3,7 @@ import express from "express";
 import cors from 'cors';
 
 import { entregasRouter } from "./infra/http/routers/entrega.router";
+import { entregadoresRouter } from "./infra/http/routers/entregador.router";
 
 dotenv.config({ quiet: true });
 
@@ -19,6 +20,7 @@ app.use(cors());
 
 // Rotas da aplicação
 app.use('/entregas', entregasRouter);
+app.use('/entregadores', entregadoresRouter);
 
 app.listen(
     PORT,

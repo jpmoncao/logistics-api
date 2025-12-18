@@ -22,6 +22,26 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
         return PrismaEntregadorMapper.toDomain(raw);
     }
 
+    async findByEmail(email: string): Promise<Entregador | null> {
+        const raw = await this.prisma.entregador.findUnique({
+            where: { email }
+        });
+
+        if (!raw) return null;
+
+        return PrismaEntregadorMapper.toDomain(raw);
+    }
+
+    async findByCPF(cpf: string): Promise<Entregador | null> {
+        const raw = await this.prisma.entregador.findUnique({
+            where: { cpf }
+        });
+
+        if (!raw) return null;
+
+        return PrismaEntregadorMapper.toDomain(raw);
+    }
+
     async save(entregador: Entregador): Promise<void> {
         const data = PrismaEntregadorMapper.toPersistence(entregador);
 
