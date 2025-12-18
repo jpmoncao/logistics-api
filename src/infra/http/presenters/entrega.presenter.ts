@@ -3,7 +3,7 @@ import { Entrega } from "../../../domain/entities/entrega.entity";
 interface EntregaHTTP {
     id_entrega: string;
     status: string;
-    movimentacoes: { data: string, descricao: string }[]
+    movimentacoes: { data: string, descricao: string }[];
 }
 
 export class EntregaPresenter {
