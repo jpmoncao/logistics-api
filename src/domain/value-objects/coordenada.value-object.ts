@@ -27,6 +27,8 @@ export class Coordenada {
     public calcularDistancia(para: Coordenada) {
         this.validarCoordendas(para.latitude, para.longitude);
 
-        return haversineDistance(this._latitude, this._longitude, para.latitude, para.longitude);
+        const distance = haversineDistance(this._latitude, this._longitude, para.latitude, para.longitude);
+
+        return distance.toLocaleString('pt-BR', { style: 'unit', unit: 'kilometer', maximumFractionDigits: 1 });
     }
 }
