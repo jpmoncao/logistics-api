@@ -88,6 +88,9 @@ export class Entrega extends AggregateRoot {
         if (this._status != StatusEntrega.CAMINHO)
             throw new DomainRuleError('Apenas entregas com status "CAMINHO" podem ser receber atualizações do percurso.');
 
+        if (!this._entregadorId)
+            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
+
         const coordenada = new Coordenada(latitude, longitude);
 
         if (!!this._localizacaoAtual && this._localizacaoAtual.calcularDistancia(coordenada) < 1)

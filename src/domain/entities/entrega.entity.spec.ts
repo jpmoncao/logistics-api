@@ -12,10 +12,13 @@ describe('Entrega Entity', () => {
     const coordenadaAtualizacaoFake = new Coordenada(0, 0);
     const coordenadaDestinoFake = new Coordenada(1, 1);
 
+    const entregadorIdFake = 'entregador_123';
+
     it('deve criar a entrega com o status PENDENTE por padrão', () => {
         const entrega = new Entrega({
             status: undefined as any,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         expect(entrega.status).toEqual(StatusEntrega.PENDENTE);
@@ -25,7 +28,8 @@ describe('Entrega Entity', () => {
     it('deve criar a entrega informando as coordenadas de destino', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         expect(entrega.destino.latitude).toEqual(1);
@@ -36,7 +40,8 @@ describe('Entrega Entity', () => {
     it('deve mudar o status para CAMINHO ao despachar', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -46,10 +51,26 @@ describe('Entrega Entity', () => {
         expect(entrega.movimentacoes[0].descricao).toEqual('O pedido saiu para entrega!');
     });
 
+    it('deve lançar DomainRuleError quando despachar uma entrega que não tem entregador atribuído', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.PENDENTE,
+            destino: coordenadaDestinoFake
+        });
+
+        expect(() => {
+            entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+        }).toThrow(DomainRuleError);
+
+        expect(() => {
+            entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+        }).toThrow('A entrega precisa ter um entregador atribuído.');
+    });
+
     it('deve lançar DomainRuleError quando despachar uma entrega que não está pendente', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CONCLUIDO,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         expect(() => {
@@ -64,7 +85,8 @@ describe('Entrega Entity', () => {
     it('deve adicionar um EntregaDespachadaEvent ao despachar a entrega', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -75,7 +97,8 @@ describe('Entrega Entity', () => {
     it('deve atualizar a localização atual da entrega ao despachar a entrega', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -88,7 +111,8 @@ describe('Entrega Entity', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         }, 'test_id');
 
         entrega.concluirEntrega();
@@ -113,11 +137,27 @@ describe('Entrega Entity', () => {
         }).toThrow('Apenas entregas com status "CAMINHO" pode ser concluídas.');
     });
 
+    it('deve lançar DomainRuleError quando concluir uma entrega que não tem entregador atribuído', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.CAMINHO,
+            destino: coordenadaDestinoFake
+        });
+
+        expect(() => {
+            entrega.concluirEntrega();
+        }).toThrow(DomainRuleError);
+
+        expect(() => {
+            entrega.concluirEntrega();
+        }).toThrow('A entrega precisa ter um entregador atribuído.');
+    });
+
     it('deve adicionar um EntregaConcluidaEvent ao concluir a entrega', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         }, 'test_id');
 
         entrega.concluirEntrega();
@@ -129,7 +169,8 @@ describe('Entrega Entity', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!', coordenada: coordenadaOrigemFake })],
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         }, 'test_id');
 
         entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -143,7 +184,8 @@ describe('Entrega Entity', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!', coordenada: coordenadaOrigemFake })],
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         }, 'test_id');
 
         entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -154,7 +196,8 @@ describe('Entrega Entity', () => {
     it('deve lançar DomainRuleError quando atualizar a posição de uma entrega que não está à caminho', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         expect(() => {
@@ -166,11 +209,27 @@ describe('Entrega Entity', () => {
         }).toThrow('Apenas entregas com status "CAMINHO" podem ser receber atualizações do percurso.');
     });
 
+    it('deve lançar DomainRuleError quando atualizar a posição de uma entrega que não tem entregador atribuído', () => {
+        const entrega = new Entrega({
+            status: StatusEntrega.CAMINHO,
+            destino: coordenadaDestinoFake
+        });
+
+        expect(() => {
+            entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+        }).toThrow(DomainRuleError);
+
+        expect(() => {
+            entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
+        }).toThrow('A entrega precisa ter um entregador atribuído.');
+    });
+
     it('deve lançar DomainRuleError quando a posição de uma entrega se deslocou menos que 1km', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             localizacaoAtual: coordenadaOrigemFake,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         expect(() => {
@@ -186,7 +245,8 @@ describe('Entrega Entity', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             localizacaoAtual: coordenadaOrigemFake,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -198,7 +258,8 @@ describe('Entrega Entity', () => {
     it('deve atualizar a localização atual da entrega ao despachar a entrega', () => {
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         });
 
         entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
@@ -210,7 +271,8 @@ describe('Entrega Entity', () => {
         const entrega = new Entrega({
             status: StatusEntrega.CAMINHO,
             movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
-            destino: coordenadaDestinoFake
+            destino: coordenadaDestinoFake,
+            entregadorId: entregadorIdFake
         }, 'test_id');
 
         entrega.concluirEntrega();
