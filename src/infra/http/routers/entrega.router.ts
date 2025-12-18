@@ -6,6 +6,8 @@ import { concluirEntregaFactory } from "../../factories/concluir-entrega.factory
 import { listarHistoricoEntregaFactory } from "../../factories/listar-historico-entrega.factory";
 import { atualizarLocalizacaoEntregaFactory } from "../../factories/atualizar-localizacao-entrega.factory";
 
+import { verificarEntregadorMiddleware } from "../middleware/verificar-entregador.middleware";
+
 const entregasRouter = Router();
 
 const createEntregaController = createEntregaFactory();
@@ -16,7 +18,7 @@ const atualizarLocalizacaoEntregaController = atualizarLocalizacaoEntregaFactory
 
 entregasRouter.post("/", createEntregaController.handle);
 entregasRouter.get("/:id/historico", listarHistoricoEntregaController.handle);
-entregasRouter.patch("/:id/despachar", despacharEntregaController.handle);
+entregasRouter.patch("/:id/despachar", verificarEntregadorMiddleware, despacharEntregaController.handle);
 entregasRouter.patch("/:id/atualizar", atualizarLocalizacaoEntregaController.handle);
 entregasRouter.patch("/:id/concluir", concluirEntregaController.handle);
 
