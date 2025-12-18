@@ -5,6 +5,6 @@ import { AppError } from "./app-error";
  */
 export class ResourceNotAllowedError extends AppError {
     constructor(resourceName: string = 'Recurso') {
-        super(`${resourceName} não permitido.`, 403, 'resource_not_allowed_error');
+        super(`${resourceName} não tem permissão para está ação.`, 403, 'resource_not_allowed_error');
     }
 }

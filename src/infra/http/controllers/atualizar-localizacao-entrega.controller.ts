@@ -22,8 +22,7 @@ export class AtualizarLocalizacaoEntregaController extends BaseController {
             const { id } = atualizarLocalizacaoEntregaParamsSchema.parse(req.params);
             const { latitude, longitude } = atualizarLocalizacaoEntregaBodySchema.parse(req.body);
 
-            await this.atualizarLocalizacaoEntregaUseCase.execute({ entregaId: id, latitude, longitude });
-
+            await this.atualizarLocalizacaoEntregaUseCase.execute({ entregaId: id, entregadorId: req.user.id, latitude, longitude });
             return this.ok(res, 'Entrega teve sua atualização alterada com sucesso.');
         } catch (error) {
             this.analyzeError(res, error)

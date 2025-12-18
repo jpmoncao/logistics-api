@@ -19,7 +19,7 @@ const atualizarLocalizacaoEntregaController = atualizarLocalizacaoEntregaFactory
 entregasRouter.post("/", createEntregaController.handle);
 entregasRouter.get("/:id/historico", listarHistoricoEntregaController.handle);
 entregasRouter.patch("/:id/despachar", verificarEntregadorMiddleware, despacharEntregaController.handle);
-entregasRouter.patch("/:id/atualizar", atualizarLocalizacaoEntregaController.handle);
-entregasRouter.patch("/:id/concluir", concluirEntregaController.handle);
+entregasRouter.patch("/:id/atualizar", verificarEntregadorMiddleware, atualizarLocalizacaoEntregaController.handle);
+entregasRouter.patch("/:id/concluir", verificarEntregadorMiddleware, concluirEntregaController.handle);
 
 export { entregasRouter };

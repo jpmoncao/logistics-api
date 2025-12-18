@@ -1,12 +1,13 @@
 import { BaseUseCase } from "../../core/base/usecase";
 import { DomainEventDispatcher } from "../../core/events/dispatcher";
+import { ResourceNotFoundError } from "../../core/errors/resource-not-found.error";
+import { ResourceNotAllowedError } from "../../core/errors/resource-not-allowed.error";
 
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 
-import { ResourceNotFoundError } from "../../core/errors/resource-not-found.error";
-
 interface ConcluirEntregaRequest {
     entregaId: string;
+    entregadorId: string;
 }
 
 export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, void> {
@@ -18,6 +19,9 @@ export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, 
         const entrega = await this.entregaRepository.findById(request.entregaId);
         if (!entrega)
             throw new ResourceNotFoundError('Entrega');
+
+        if (entrega.entregadorId !== request.entregadorId)
+            throw new ResourceNotAllowedError('Entregador');
 
         entrega.concluirEntrega();
 

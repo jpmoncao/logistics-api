@@ -30,7 +30,7 @@ export class CreateEntregadorUseCase extends BaseUseCase<CreateEntregadorRequest
         if (entregadorCPFAlreadyExists)
             throw new ResourceAlreadyExistsError('Entregador');
 
-        const passwordHash = await this.encrypter.hash(senha);
+        const passwordHash = await this.encrypter.encrypt<string>(senha);
 
         const entregador = new Entregador({
             nome,

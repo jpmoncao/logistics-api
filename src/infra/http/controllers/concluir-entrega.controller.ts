@@ -16,7 +16,7 @@ export class ConcluirEntregaController extends BaseController {
         try {
             const { id } = concluirEntregaParamsSchema.parse(req.params);
 
-            await this.concluirEntregaUseCase.execute({ entregaId: id });
+            await this.concluirEntregaUseCase.execute({ entregaId: id, entregadorId: req.user.id });
 
             return this.ok(res, 'Pedido de entrega foi concluído.');
         } catch (error) {
