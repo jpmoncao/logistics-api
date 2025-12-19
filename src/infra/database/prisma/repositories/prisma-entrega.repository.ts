@@ -48,18 +48,30 @@ export class PrismaEntregaRepository implements EntregaRepository {
     }
 
     async saveMany(entregas: Entrega[]): Promise<void> {
-        const transactions = entregas.map(entrega => {
-            this.prisma.movimentacao.deleteMany({
-                where: { entregaId: entrega.id }
-            });
-
+        const transactions = entregas.flatMap(entrega => {
             const data = PrismaEntregaMapper.toPersistence(entrega);
-            return this.prisma.entrega.update({
-                where: { id: entrega.id },
-                data
-            });
+
+            return [
+                this.prisma.movimentacao.deleteMany({
+                    where: { entregaId: entrega.id }
+                }),
+
+                this.prisma.entrega.update({
+                    where: { id: entrega.id },
+                    data
+                })
+            ];
         });
 
         await this.prisma.$transaction(transactions);
+    }
+
+    async findAllByEntregadorId(entregadorId: string): Promise<Entrega[]> {
+        const raws = await this.prisma.entrega.findMany({
+            where: { entregadorId },
+            include: { movimentacoes: true }
+        });
+
+        return raws.map(PrismaEntregaMapper.toDomain);
     }
 }
