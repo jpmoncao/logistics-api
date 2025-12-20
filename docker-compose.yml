@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mysql:8.0 
+    container_name: mysql_ddd_api
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: adminadmin
+      MYSQL_DATABASE: logistics_db      
+    ports:
+      - "3306:3306"                            
+    volumes:
+      - mysql_data:/var/lib/mysql      
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma_ddd_api
+    restart: always
+    environment:
+      PMA_HOST: db
+    ports:
+      - "8080:80"
+    depends_on:
+      - db      
+
+volumes:
+  mysql_data:
