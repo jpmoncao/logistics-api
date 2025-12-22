@@ -59,9 +59,7 @@ model Pessoa {
   id       String @id @default(uuid())
   nome     String
   cpf      String @unique
-  email    String @unique
   telefone String @unique
-  senha    String
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -73,6 +71,8 @@ model Pessoa {
 
 model Entregador {
   id       String @id @default(uuid())
+  email    String @unique
+  senha    String
   pessoaId String @unique
   pessoa   Pessoa @relation(fields: [pessoaId], references: [id], onDelete: Cascade)
 
@@ -87,6 +87,8 @@ model Entregador {
 
 model Destinatario {
   id       String @id @default(uuid())
+  email    String @unique
+  senha    String
   pessoaId String @unique
   pessoa   Pessoa @relation(fields: [pessoaId], references: [id], onDelete: Cascade)
 

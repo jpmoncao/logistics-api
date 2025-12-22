@@ -25,11 +25,7 @@ export class PrismaDestinatarioRepository implements DestinatarioRepository {
 
     async findByEmail(email: string): Promise<Destinatario | null> {
         const raw = await this.prisma.destinatario.findFirst({
-            where: {
-                pessoa: {
-                    email: email
-                }
-            },
+            where: { email },
             include: { pessoa: true }
         });
 
@@ -40,11 +36,18 @@ export class PrismaDestinatarioRepository implements DestinatarioRepository {
 
     async findByCPF(cpf: string): Promise<Destinatario | null> {
         const raw = await this.prisma.destinatario.findFirst({
-            where: {
-                pessoa: {
-                    cpf: cpf
-                }
-            },
+            where: { pessoa: { cpf } },
+            include: { pessoa: true }
+        });
+
+        if (!raw) return null;
+
+        return PrismaDestinatarioMapper.toDomain(raw);
+    }
+
+    async findByTelefone(telefone: string): Promise<Destinatario | null> {
+        const raw = await this.prisma.destinatario.findFirst({
+            where: { pessoa: { telefone } },
             include: { pessoa: true }
         });
 
@@ -54,11 +57,19 @@ export class PrismaDestinatarioRepository implements DestinatarioRepository {
     }
 
     async save(destinatario: Destinatario): Promise<void> {
-        const data = PrismaDestinatarioMapper.toPersistence(destinatario);
-
         await this.prisma.destinatario.update({
-            where: { id: destinatario.id },
-            data
+            where: { id: destinatario.id.toString() },
+            data: {
+                email: destinatario.email,
+                senha: destinatario.senha,
+                pessoa: {
+                    update: {
+                        nome: destinatario.nome,
+                        telefone: destinatario.telefone,
+                        cpf: destinatario.cpf,
+                    }
+                }
+            }
         });
     }
 }

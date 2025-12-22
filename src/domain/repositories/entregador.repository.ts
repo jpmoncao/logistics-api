@@ -5,5 +5,6 @@ export interface EntregadorRepository {
     findById(id: string): Promise<Entregador | null>,
     findByEmail(email: string): Promise<Entregador | null>,
     findByCPF(cpf: string): Promise<Entregador | null>,
+    findByTelefone(telefone: string): Promise<Entregador | null>,
     save(entregador: Entregador): Promise<void>
 }

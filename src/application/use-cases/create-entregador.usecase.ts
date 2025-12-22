@@ -30,6 +30,10 @@ export class CreateEntregadorUseCase extends BaseUseCase<CreateEntregadorRequest
         if (entregadorCPFAlreadyExists)
             throw new ResourceAlreadyExistsError('Entregador');
 
+        const entregadorTelefoneAlreadyExists = await this.entregadorRepository.findByTelefone(telefone);
+        if (entregadorTelefoneAlreadyExists)
+            throw new ResourceAlreadyExistsError('Entregador');
+
         const passwordHash = await this.hasher.hash(senha);
 
         const entregador = new Entregador({

@@ -25,11 +25,7 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
 
     async findByEmail(email: string): Promise<Entregador | null> {
         const raw = await this.prisma.entregador.findFirst({
-            where: {
-                pessoa: {
-                    email: email
-                }
-            },
+            where: { email },
             include: { pessoa: true }
         });
 
@@ -40,11 +36,18 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
 
     async findByCPF(cpf: string): Promise<Entregador | null> {
         const raw = await this.prisma.entregador.findFirst({
-            where: {
-                pessoa: {
-                    cpf: cpf
-                }
-            },
+            where: { pessoa: { cpf } },
+            include: { pessoa: true }
+        });
+
+        if (!raw) return null;
+
+        return PrismaEntregadorMapper.toDomain(raw);
+    }
+
+    async findByTelefone(telefone: string): Promise<Entregador | null> {
+        const raw = await this.prisma.entregador.findFirst({
+            where: { pessoa: { telefone } },
             include: { pessoa: true }
         });
 
@@ -54,11 +57,19 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
     }
 
     async save(entregador: Entregador): Promise<void> {
-        const data = PrismaEntregadorMapper.toPersistence(entregador);
-
         await this.prisma.entregador.update({
             where: { id: entregador.id },
-            data
+            data: {
+                email: entregador.email,
+                senha: entregador.senha,
+                pessoa: {
+                    update: {
+                        nome: entregador.nome,
+                        telefone: entregador.telefone,
+                        cpf: entregador.cpf,
+                    }
+                }
+            }
         });
     }
 }
