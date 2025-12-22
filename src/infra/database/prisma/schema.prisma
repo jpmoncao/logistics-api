@@ -32,7 +32,9 @@ model Entrega {
   entregador   Entregador? @relation(fields: [entregadorId], references: [id], onDelete: SetNull)
 
   // Relacionamento 1:N
-  movimentacoes Movimentacao[]
+  movimentacoes  Movimentacao[]
+  destinatario   Destinatario?  @relation(fields: [destinatarioId], references: [id])
+  destinatarioId String?
 
   @@map("entregas")
 }
@@ -53,13 +55,26 @@ model Movimentacao {
   @@map("movimentacoes")
 }
 
-model Entregador {
+model Pessoa {
   id       String @id @default(uuid())
   nome     String
   cpf      String @unique
   email    String @unique
   telefone String @unique
   senha    String
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  entregador   Entregador?
+  destinatario Destinatario?
+
+  @@map("pessoas")
+}
+
+model Entregador {
+  id       String @id @default(uuid())
+  pessoaId String @unique
+  pessoa   Pessoa @relation(fields: [pessoaId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,4 +83,18 @@ model Entregador {
   entregas Entrega[]
 
   @@map("entregadores")
+}
+
+model Destinatario {
+  id       String @id @default(uuid())
+  pessoaId String @unique
+  pessoa   Pessoa @relation(fields: [pessoaId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamento 1:N
+  entregas Entrega[]
+
+  @@map("destinatarios")
 }

@@ -14,7 +14,8 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
 
     async findById(id: string): Promise<Entregador | null> {
         const raw = await this.prisma.entregador.findUnique({
-            where: { id }
+            where: { id },
+            include: { pessoa: true }
         });
 
         if (!raw) return null;
@@ -23,8 +24,13 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
     }
 
     async findByEmail(email: string): Promise<Entregador | null> {
-        const raw = await this.prisma.entregador.findUnique({
-            where: { email }
+        const raw = await this.prisma.entregador.findFirst({
+            where: {
+                pessoa: {
+                    email: email
+                }
+            },
+            include: { pessoa: true }
         });
 
         if (!raw) return null;
@@ -33,8 +39,13 @@ export class PrismaEntregadorRepository implements EntregadorRepository {
     }
 
     async findByCPF(cpf: string): Promise<Entregador | null> {
-        const raw = await this.prisma.entregador.findUnique({
-            where: { cpf }
+        const raw = await this.prisma.entregador.findFirst({
+            where: {
+                pessoa: {
+                    cpf: cpf
+                }
+            },
+            include: { pessoa: true }
         });
 
         if (!raw) return null;

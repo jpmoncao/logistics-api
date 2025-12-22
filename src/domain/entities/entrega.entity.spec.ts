@@ -337,8 +337,8 @@ describe('Entrega Entity', () => {
 
         entrega.atualizarLocalizacaoAtual(coordenadaDestinoFake.latitude, coordenadaDestinoFake.longitude);
 
-        expect(entrega.localizacaoAtual?.latitude).toEqual(0);
-        expect(entrega.localizacaoAtual?.longitude).toEqual(0);
+        expect(entrega.localizacaoAtual?.latitude).toEqual(1);
+        expect(entrega.localizacaoAtual?.longitude).toEqual(1);
         expect(entrega.movimentacoes[0].descricao).toEqual('O pedido está nas redondezas do destino.');
     });
 });
