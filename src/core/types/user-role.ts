@@ -1,4 +1,5 @@
 export enum UserRole {
     ADMIN = 'admin',
-    ENTREGADOR = 'entregador'
+    ENTREGADOR = 'entregador',
+    DESTINATARIO = 'destinatario'
 }
