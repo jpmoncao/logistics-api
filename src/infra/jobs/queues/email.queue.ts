@@ -7,10 +7,12 @@ export class EmailQueue implements JobQueue<EmailJobName> {
     public queueName = 'email-queue';
     static queueName = 'email-queue';
 
-    private bullQueue: Queue;
+    private _bullQueue: Queue;
+
+    get queue() { return this._bullQueue }
 
     constructor() {
-        this.bullQueue = new Queue(EmailQueue.queueName, {
+        this._bullQueue = new Queue(EmailQueue.queueName, {
             connection: connection,
             defaultJobOptions: {
                 removeOnComplete: true,
@@ -21,6 +23,6 @@ export class EmailQueue implements JobQueue<EmailJobName> {
     }
 
     async add<T>(name: EmailJobName, data: T) {
-        await this.bullQueue.add(name, data);
+        await this._bullQueue.add(name, data);
     }
 }

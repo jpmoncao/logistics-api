@@ -19,6 +19,8 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@bull-board/api": "^6.15.0",
+    "@bull-board/express": "^6.15.0",
     "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.6",
