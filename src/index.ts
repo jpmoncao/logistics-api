@@ -1,6 +1,8 @@
 import dotenv from 'dotenv'
 import express from "express";
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import { apiReference } from '@scalar/express-api-reference';
 import { ExpressAdapter } from '@bull-board/express';
 import { createBullBoard } from '@bull-board/api';
@@ -29,7 +31,24 @@ const app = express();
 
 // Instâncias de uso do Express
 app.use(express.json());
-app.use(cors());
+
+// Middleware do Helmet
+app.use(helmet());
+
+// Adicionando o CORS
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+}));
+
+// Adicionar o rate limit do Express
+app.use(rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Muitas requisições deste IP, tente novamente mais tarde.',
+    standardHeaders: true,
+    legacyHeaders: false,
+}));
 
 // Adicionando Bull Board na API
 const emailQueue = new EmailQueue();
