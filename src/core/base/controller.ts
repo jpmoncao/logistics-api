@@ -5,6 +5,7 @@ import HttpStatusCode from '../../infra/http/utils/status-code';
 import { RouteDocsConfig } from '../../infra/http/docs/describe-route';
 
 import { AppError } from '../errors/app-error';
+import { pinoLogger } from '../../infra/loggers/pino.logger';
 
 export abstract class BaseController {
     abstract handle(req: Request, res: Response): Promise<Response | void>;
@@ -12,6 +13,11 @@ export abstract class BaseController {
 
     protected analyzeError(res: Response, error: unknown) {
         if (error instanceof AppError) {
+            pinoLogger.warn({
+                status: error.status,
+                message: error.message
+            }, 'Business Logic Error');
+
             return res.status(error.statusCode).json({
                 status: error.status,
                 message: error.message
@@ -19,6 +25,10 @@ export abstract class BaseController {
         }
 
         if (error instanceof ZodError) {
+            pinoLogger.warn({
+                error: error.format()
+            }, 'Validation Error');
+
             return res.status(HttpStatusCode.BAD_REQUEST).json({
                 status: 'zod_validation_error',
                 message: 'Dados inválidos.',
@@ -26,7 +36,7 @@ export abstract class BaseController {
             });
         }
 
-        console.error(error);
+        pinoLogger.error({ stack: error instanceof Error ? error.stack : undefined }, 'Internal server error');
         return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
             status: 'error',
             message: 'Internal server error.',

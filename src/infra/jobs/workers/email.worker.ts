@@ -3,6 +3,7 @@ import { connection } from "../../database/redis/conn";
 import { EmailQueue } from "../queues/email.queue";
 import { NodemailerMailGateway } from "../../gateway/nodemailer-mail.gateway";
 import { EmailJobProcessor } from "../processors/email.processor";
+import { pinoLogger } from "../../loggers/pino.logger";
 
 export function emailWorker(message: string): Worker {
     // Gateways
@@ -22,8 +23,12 @@ export function emailWorker(message: string): Worker {
         console.log(message);
 
     // Listeners
-    worker.on('completed', job => console.log(`[✅ Job] #${job.id} ok`));
-    worker.on('failed', (job, err) => console.log(`[❌ Job] #${job?.id} falhou: ${err.message}`));
+    worker.on('completed', job => {
+        pinoLogger.info(`[✅ Job] #${job.id} ok`);
+    });
+    worker.on('failed', (job, err) => {
+        pinoLogger.warn({ error: err.message }, `[❌ Job] #${job?.id} falhou`);
+    });
 
     return worker;
 }

@@ -11,6 +11,8 @@ import { getOpenApiSpec } from './infra/http/docs/open-api-spec';
 import { emailWorker } from './infra/jobs/workers/email.worker'
 import { EmailQueue } from './infra/jobs/queues/email.queue';
 
+import { loggerMiddleware } from './infra/http/middlewares/logger.middleware';
+
 import { entregasRouter } from "./infra/http/routers/entrega.router";
 import { entregadoresRouter } from "./infra/http/routers/entregador.router";
 import { destinatariosRouter } from "./infra/http/routers/destinatario.router";
@@ -35,6 +37,9 @@ const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/admin/queues');
 createBullBoard({ queues: [new BullMQAdapter(emailQueue.queue)], serverAdapter });
 app.use('/admin/queues', serverAdapter.getRouter());
+
+// Middleware do logger
+app.use(loggerMiddleware);
 
 // Rotas da aplicação
 app.use('/entregas', entregasRouter);

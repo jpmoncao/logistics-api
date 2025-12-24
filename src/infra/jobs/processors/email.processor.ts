@@ -1,5 +1,6 @@
 import { Job } from "bullmq";
 import { MailGateway, MailBody, MailTo } from "../../../application/gateways/mail.gateway";
+import { pinoLogger } from "../../loggers/pino.logger";
 
 interface EmailJobData {
     to: MailTo[];
@@ -11,7 +12,7 @@ export class EmailJobProcessor {
     constructor(private mailGateway: MailGateway) { }
 
     public process = async (job: Job<EmailJobData>) => {
-        console.log(`[⏩ Processor] Processando job #${job.id}`);
+        pinoLogger.info(`[⏩ Processor] Processando job #${job.id}`);
         const { to, subject, body } = job.data;
 
         await this.mailGateway.sendMail(to, subject, body);

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
 import { MailGateway, MailTo, MailBody } from "../../application/gateways/mail.gateway";
+import { pinoLogger } from '../loggers/pino.logger';
 
 export class NodemailerMailGateway implements MailGateway {
     private DEV_MODE = process.env.NODE_ENV !== 'production';
@@ -48,11 +49,11 @@ export class NodemailerMailGateway implements MailGateway {
         });
 
         if (this.DEV_MODE) {
-            console.log(`[📧 Mailservice] URL: ${nodemailer.getTestMessageUrl(message)}`);
+            pinoLogger.info(`[📧 Mailservice] URL: ${nodemailer.getTestMessageUrl(message)}`);
             return message!;
         }
 
-        console.log(`[📧 Mailservice] Mensagem enviada: ${message.messageId}`);
+        pinoLogger.info(`[📧 Mailservice] Mensagem enviada: ${message.messageId}`);
         return message!;
     }
 }
