@@ -1,28 +1,34 @@
 > Este repositório ainda está em desenvolvimento...
 
-# Domain Driven Design
+# Logistics API
 
 ### Caso de uso:
-- Para estudar DDD na prática, além do design, da arquitetura e código limpo, selecionei um caso de uso de um **setor de logística**.
+- Para estudar arquitetura de software na prática, com conceitos de Clean Architecture, DDD, Clean Code, selecionei um caso de uso de um **setor de logística**.
 - Aqui estão alguns pontos do que essa API pode fazer:
 1. **Entregas**
     - Criação de entregas
     - Manipulação do fluxo de entrega: `despacho` > `em caminho` > `conclusão da entrega`
     - Rastreamento com geolocalização da entrega
     - Controle de histórico e movimentações da entrega
-2. **Entregador** - `[making]`
+2. **Entregador**
     - Criação do entregador
     - Autenticação no sistema
-    - Atribuição das entregas
+    - Atribuição das entregas em lote
     - Atualização da localização do entregador
-    - Confirmação de entrega
+    - Confirmação de entrega com comprovante
+3. **Destinatário**
+    - Criação do destinatário
+    - Autenticação no sistema
+    - Rastreio da suas entregas
   
 ### Stack utilizada:
 - **Typescript**
 - **Node 22.15.0**
-- **API**: Express
-- **Banco** de dados: MySQL
+- **API**: Express 5
 - **ORM**: Prisma
+- **Banco de dados**: MySQL
+- **Cache**: Redis
+- **Queue**: BullMQ
 - **Testes**: Vitest
 
 ### NPM scripts
