@@ -3,6 +3,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 
 import { UserRole } from "../../../core/types/user-role";
+import { InvalidTokenError } from "../../../core/errors/invalid-token";
 
 import { JwtEncrypter } from '../../cryptography/jwt-encrypter';
 
@@ -16,29 +17,27 @@ const JwtTokenParser = z.object({
     role: z.enum(UserRole).optional()
 });
 
-const INVALID_TOKEN_MESSAGE = 'Token de autenticação inválido.';
-
 const verificarAutentificacaoMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { authorization } = req.headers;
     if (!authorization)
-        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
+        throw new InvalidTokenError();
 
     const token = authorization.split('Bearer ')[1];
     if (!token)
-        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
+        throw new InvalidTokenError();
 
     try {
         const encrypter = new JwtEncrypter();
         const payload = await encrypter.decrypt<JwtTokenPayload>(token);
 
         if (!payload)
-            return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
+            throw new InvalidTokenError(token);
 
         const { sub, role } = JwtTokenParser.parse(payload);
 
         req.user = { id: sub, role };
     } catch (error) {
-        return res.status(401).json({ message: INVALID_TOKEN_MESSAGE });
+        throw new InvalidTokenError(token);
     }
 
     next();

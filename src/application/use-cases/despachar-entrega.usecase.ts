@@ -20,11 +20,11 @@ export class DespacharEntregaUseCase extends BaseUseCase<DespacharEntregaRequest
     async execute(request: DespacharEntregaRequest): Promise<void> {
         const entrega = await this.entregaRepository.findById(request.entregaId);
         if (!entrega)
-            throw new ResourceNotFoundError('Entrega');
+            throw new ResourceNotFoundError('Entrega', request.entregaId);
 
         const entregador = await this.entregadorRepository.findById(request.entregadorId);
         if (!entregador)
-            throw new ResourceNotFoundError('Entregador');
+            throw new ResourceNotFoundError('Entregador', request.entregadorId);
 
         entrega.atribuirEntregador(entregador.id);
 

@@ -21,10 +21,10 @@ export class ListarHistoricoEntregaUseCase extends BaseUseCase<ListarHistoricoEn
         const entrega = await this.entregaRepository.findById(request.entregaId);
 
         if (!entrega)
-            throw new ResourceNotFoundError('Entrega');
+            throw new ResourceNotFoundError('Entrega', request.entregaId);
 
         if (entrega.destinatarioId !== request.destinatarioId)
-            throw new ResourceNotAllowedError('Entrega');
+            throw new ResourceNotAllowedError('Entrega', { destinatarioId: request.destinatarioId });
 
         return { entrega };
     }

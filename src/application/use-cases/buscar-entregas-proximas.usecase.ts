@@ -20,7 +20,7 @@ export class BuscarEntregasProximasUseCase extends BaseUseCase<BuscarEntregasPro
     async execute({ entregadorId }: BuscarEntregasProximasRequest): Promise<BuscarEntregasProximasResponse> {
         const entregador = await this.entregadorRepository.findById(entregadorId);
         if (!entregador)
-            throw new ResourceNotFoundError('Entregador');
+            throw new ResourceNotFoundError('Entregador', entregadorId);
 
         const cached = await this.entregaCacheRepository.findAllByEntregadorId(entregadorId);
         if (cached)

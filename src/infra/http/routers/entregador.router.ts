@@ -5,6 +5,7 @@ import { autenticarEntregadorFactory } from "../../factories/autenticar-entregad
 import { atualizarLocalizacaoEntregadorFactory } from "../../factories/atualizar-localizacao-entregador.factory";
 import { buscarEntregasProximasFactory } from "../../factories/buscar-entregas-proximas.factory";
 
+import { verificarAutentificacaoMiddleware } from "../middlewares/verificar-autentificacao.middleware";
 import { verificarEntregadorMiddleware } from "../middlewares/verificar-entregador.middleware";
 
 const group = createRouteGroup('/entregadores');
@@ -16,8 +17,8 @@ const buscarEntregasProximasController = buscarEntregasProximasFactory();
 
 group.route('post', "/", createEntregadorController);
 group.route('post', "/login", autenticarEntregadorController);
-group.route('post', "/me", atualizarLocalizacaoEntregadorController, verificarEntregadorMiddleware);
-group.route('get', "/entregas-proximas", buscarEntregasProximasController, verificarEntregadorMiddleware);
+group.route('post', "/me", atualizarLocalizacaoEntregadorController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware);
+group.route('get', "/entregas-proximas", buscarEntregasProximasController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware);
 
 const entregadoresRouter = group.router;
 export { entregadoresRouter };

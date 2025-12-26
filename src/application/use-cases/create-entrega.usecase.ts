@@ -24,7 +24,7 @@ export class CreateEntregaUseCase extends BaseUseCase<CreateEntregaRequest, Crea
     async execute({ latitude, longitude, destinatarioId }: CreateEntregaRequest): Promise<CreateEntregaResponse> {
         const destinatario = this.destinatarioRepository.findById(destinatarioId);
         if (!destinatario)
-            throw new ResourceNotFoundError("Destinatário");
+            throw new ResourceNotFoundError("Destinatário", destinatarioId);
 
         const entrega = new Entrega({
             status: StatusEntrega.PENDENTE,

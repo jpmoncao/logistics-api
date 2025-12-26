@@ -21,12 +21,12 @@ export class DespacharLoteEntregasUseCase extends BaseUseCase<DespacharLoteEntre
     async execute({ entregadorId, entregas: entregasIds, latitude, longitude }: DespacharLoteEntregasRequest): Promise<void> {
         const entregador = await this.entregadorRepository.findById(entregadorId);
         if (!entregador)
-            throw new ResourceNotFoundError('Entregador');
+            throw new ResourceNotFoundError('Entregador', entregadorId);
 
         const entregasEntities = await this.entregaRepository.findManyByIds(entregasIds);
 
         if (entregasEntities.length !== entregasIds.length)
-            throw new ResourcesNotFoundError('Uma ou mais entregas');
+            throw new ResourcesNotFoundError('one or more "deliveries"');
 
         for (const entrega of entregasEntities) {
             entrega.atribuirEntregador(entregador.id);

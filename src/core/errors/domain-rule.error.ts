@@ -5,6 +5,11 @@ import { AppError } from "./app-error";
  */
 export class DomainRuleError extends AppError {
     constructor(message: string) {
-        super(message, 400, 'domain_rule_error');
+        super({
+            status: 400,
+            title: "Domain rule error",
+            detail: message,
+            type: "/errors/generic-domain-rule",
+        });
     }
 }

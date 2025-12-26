@@ -24,15 +24,15 @@ export class CreateEntregadorUseCase extends BaseUseCase<CreateEntregadorRequest
     async execute({ nome, cpf, telefone, email, senha }: CreateEntregadorRequest): Promise<CreateEntregadorResponse> {
         const entregadorEmailAlreadyExists = await this.entregadorRepository.findByEmail(email);
         if (entregadorEmailAlreadyExists)
-            throw new ResourceAlreadyExistsError('Entregador');
+            throw new ResourceAlreadyExistsError('Entregador', { email });
 
         const entregadorCPFAlreadyExists = await this.entregadorRepository.findByCPF(cpf);
         if (entregadorCPFAlreadyExists)
-            throw new ResourceAlreadyExistsError('Entregador');
+            throw new ResourceAlreadyExistsError('Entregador', { cpf });
 
         const entregadorTelefoneAlreadyExists = await this.entregadorRepository.findByTelefone(telefone);
         if (entregadorTelefoneAlreadyExists)
-            throw new ResourceAlreadyExistsError('Entregador');
+            throw new ResourceAlreadyExistsError('Entregador', { telefone });
 
         const passwordHash = await this.hasher.hash(senha);
 

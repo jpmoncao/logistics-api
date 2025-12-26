@@ -22,10 +22,10 @@ export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, 
     async execute(request: ConcluirEntregaRequest): Promise<void> {
         const entrega = await this.entregaRepository.findById(request.entregaId);
         if (!entrega)
-            throw new ResourceNotFoundError('Entrega');
+            throw new ResourceNotFoundError('Entrega', request.entregaId);
 
         if (entrega.entregadorId !== request.entregadorId)
-            throw new ResourceNotAllowedError('Entregador');
+            throw new ResourceNotAllowedError('Entregador', { entregadorId: request.entregadorId });
 
         const timestamp = new Date().getTime();
         const extensao = request.fileType.split('/')[1] || 'jpg';

@@ -5,6 +5,11 @@ import { AppError } from "./app-error";
  */
 export class InvalidCredentialsError extends AppError {
     constructor() {
-        super(`Credenciais inválidas.`, 401, 'invalid_credentials_error');
+        super({
+            status: 401,
+            title: "Unauthorized due to invalid credentials",
+            detail: "The credentials provided are not valid.",
+            type: "/errors/invalid-credentials",
+        });
     }
 }

@@ -24,15 +24,15 @@ export class CreateDestinatarioUseCase extends BaseUseCase<CreateDestinatarioReq
     async execute({ nome, cpf, telefone, email, senha }: CreateDestinatarioRequest): Promise<CreateDestinatarioResponse> {
         const destinatarioEmailAlreadyExists = await this.destinatarioRepository.findByEmail(email);
         if (destinatarioEmailAlreadyExists)
-            throw new ResourceAlreadyExistsError('Destinatario');
+            throw new ResourceAlreadyExistsError('Destinatario', { email });
 
         const destinatarioCPFAlreadyExists = await this.destinatarioRepository.findByCPF(cpf);
         if (destinatarioCPFAlreadyExists)
-            throw new ResourceAlreadyExistsError('Destinatario');
+            throw new ResourceAlreadyExistsError('Destinatario', { cpf });
 
         const destinatarioTelefoneAlreadyExists = await this.destinatarioRepository.findByTelefone(telefone);
         if (destinatarioTelefoneAlreadyExists)
-            throw new ResourceAlreadyExistsError('Destinatario');
+            throw new ResourceAlreadyExistsError('Destinatario', { telefone });
 
         const passwordHash = await this.hasher.hash(senha);
 

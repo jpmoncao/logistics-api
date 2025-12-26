@@ -1,14 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
 import { UserRole } from "../../../core/types/user-role";
-
-import { verificarAutentificacaoMiddleware } from "./verificar-autentificacao.middleware";
+import { AccessDeniedError } from "../../../core/errors/access-denied.error";
 
 const verificarEntregadorMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    await verificarAutentificacaoMiddleware(req, res, () => { });
-
-    if (req.user?.role !== UserRole.ENTREGADOR)
-        return res.status(403).json({ message: "Acesso restrito ao usuário." });
+    if (req.user.role !== UserRole.ENTREGADOR)
+        throw new AccessDeniedError(req.user.role, UserRole.ENTREGADOR)
 
     next();
 }

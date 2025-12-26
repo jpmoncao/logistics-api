@@ -17,10 +17,10 @@ export class AtualizarLocalizacaoEntregaUseCase extends BaseUseCase<AtualizarLoc
     async execute(request: AtualizarLocalizacaoEntregaRequest): Promise<void> {
         const entrega = await this.entregaRepository.findById(request.entregaId);
         if (!entrega)
-            throw new ResourceNotFoundError('Entrega');
+            throw new ResourceNotFoundError('Entrega', request.entregaId);
 
         if (entrega.entregadorId !== request.entregadorId)
-            throw new ResourceNotAllowedError('Entregador');
+            throw new ResourceNotAllowedError('Entregador', { entregadorId: request.entregadorId });
 
         entrega.atualizarLocalizacaoAtual(request.latitude, request.longitude);
 

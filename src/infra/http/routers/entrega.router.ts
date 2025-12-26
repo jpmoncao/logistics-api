@@ -7,6 +7,7 @@ import { listarHistoricoEntregaFactory } from "../../factories/listar-historico-
 import { atualizarLocalizacaoEntregaFactory } from "../../factories/atualizar-localizacao-entrega.factory";
 import { despacharLoteEntregasFactory } from "../../factories/despachar-lote-entregas.factory";
 
+import { verificarAutentificacaoMiddleware } from "../middlewares/verificar-autentificacao.middleware";
 import { verificarEntregadorMiddleware } from "../middlewares/verificar-entregador.middleware";
 import { verificarDestinatarioMiddleware } from "../middlewares/verificar-destinatario.middleware";
 import { uploadComprovanteEntrega } from "../middlewares/upload-comprovante-entrega.middleware";
@@ -21,11 +22,11 @@ const atualizarLocalizacaoEntregaController = atualizarLocalizacaoEntregaFactory
 const despacharLoteEntregasController = despacharLoteEntregasFactory();
 
 group.route('post', "/", createEntregaController);
-group.route('patch', "/despachar-lote", despacharLoteEntregasController, verificarEntregadorMiddleware);
-group.route('get', "/:id/historico", listarHistoricoEntregaController, verificarDestinatarioMiddleware);
-group.route('patch', "/:id/despachar", despacharEntregaController, verificarEntregadorMiddleware);
-group.route('patch', "/:id/atualizar-localizacao", atualizarLocalizacaoEntregaController, verificarEntregadorMiddleware);
-group.route('patch', "/:id/concluir", concluirEntregaController, verificarEntregadorMiddleware, uploadComprovanteEntrega.single('comprovante'));
+group.route('patch', "/despachar-lote", despacharLoteEntregasController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware);
+group.route('get', "/:id/historico", listarHistoricoEntregaController, verificarAutentificacaoMiddleware, verificarDestinatarioMiddleware);
+group.route('patch', "/:id/despachar", despacharEntregaController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware);
+group.route('patch', "/:id/atualizar-localizacao", atualizarLocalizacaoEntregaController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware);
+group.route('patch', "/:id/concluir", concluirEntregaController, verificarAutentificacaoMiddleware, verificarEntregadorMiddleware, uploadComprovanteEntrega.single('comprovante'));
 
 const entregasRouter = group.router;
 export { entregasRouter };
