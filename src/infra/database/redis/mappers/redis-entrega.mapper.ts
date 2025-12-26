@@ -1,4 +1,4 @@
-import { Entrega } from "../../../../domain/entities/entrega.entity";
+import { Entrega } from "../../../../domain/aggregate/entrega.entity";
 import { RedisEntregaDTO } from "../dtos/redis-entrega.dto";
 import { StatusEntrega } from "../../../../domain/types/entrega";
 import { Coordenada } from "../../../../domain/value-objects/coordenada.value-object";

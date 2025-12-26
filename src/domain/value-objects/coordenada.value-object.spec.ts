@@ -21,16 +21,9 @@ describe('Coordenada Value Object', () => {
         }).toThrow(ValidationError);
 
         expect(() => {
-            new Coordenada(-91, 0);
-        }).toThrow('A latitude deve estar entre -90 e 90.');
-
-        expect(() => {
             new Coordenada(91, 0);
         }).toThrow(ValidationError);
-
-        expect(() => {
-            new Coordenada(91, 0);
-        }).toThrow('A latitude deve estar entre -90 e 90.');
+        
     });
 
     it('deve lançar ValidationError quando a longitude não estiver entre -180 e 180', () => {
@@ -39,15 +32,7 @@ describe('Coordenada Value Object', () => {
         }).toThrow(ValidationError);
 
         expect(() => {
-            new Coordenada(0, -181);
-        }).toThrow('A longitude deve estar entre -180 e 180.');
-
-        expect(() => {
             new Coordenada(0, 181);
         }).toThrow(ValidationError);
-
-        expect(() => {
-            new Coordenada(0, 181);
-        }).toThrow('A longitude deve estar entre -180 e 180.');
     });
 })

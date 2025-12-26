@@ -1,7 +1,7 @@
 import { Prisma, Entrega as PrismaEntrega, StatusEntrega as PrismaStatusEntrega, Movimentacao as PrismaMovimentacao } from "@prisma/client";
 
 import { Movimentacao } from "../../../../domain/entities/movimentacao.entity";
-import { Entrega } from "../../../../domain/entities/entrega.entity";
+import { Entrega } from "../../../../domain/aggregate/entrega.entity";
 
 import { StatusEntrega } from "../../../../domain/types/entrega";
 import { Coordenada } from "../../../../domain/value-objects/coordenada.value-object";

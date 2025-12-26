@@ -1,4 +1,4 @@
-import { Entrega } from "../../../../domain/entities/entrega.entity";
+import { Entrega } from "../../../../domain/aggregate/entrega.entity";
 import { EntregaCacheRepository } from "../../../../domain/repositories/entrega.repository";
 import { RedisCacheProvider } from "../../../providers/redis-cache.provider";
 import { RedisEntregaMapper } from "../mappers/redis-entrega.mapper";

@@ -1,9 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { Entrega } from './entrega.entity';
 import { StatusEntrega } from '../types/entrega';
-import { DomainRuleError } from '../../core/errors/domain-rule.error';
-import { Movimentacao } from './movimentacao.entity';
+import { Movimentacao } from '../entities/movimentacao.entity';
 import { Coordenada } from '../value-objects/coordenada.value-object';
+
+import { EntregaAlreadyDispatchedError } from "../errors/entrega-already-dispatched.error";
+import { EntregaWithoutEntregadorError } from '../errors/entrega-without-entregador.error';
+import { EntregaAlreadyCompletedError } from '../errors/entrega-already-completed.error';
+import { EntregaWithoutProofError } from '../errors/entrega-without-proof.error';
+import { EntregaOutsideCompletionRadiusError } from '../errors/entrega-outside-completion-radius.error';
+import { EntregaIsNotOnWayError } from '../errors/entrega-is-not-on-way';
+import { EntregaDidNotMoveError } from '../errors/entrega-did-not-move.error';
 
 describe('Entrega Entity', () => {
     const coordenadaOrigemFake = new Coordenada(-1, -1);
@@ -87,7 +94,7 @@ describe('Entrega Entity', () => {
         });
 
         describe('Regras de Validação', () => {
-            it('deve lançar DomainRuleError quando despachar uma entrega que não tem entregador atribuído', () => {
+            it('deve lançar EntregaWithoutEntregadorError quando despachar uma entrega que não tem entregador atribuído', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.PENDENTE,
                     destino: coordenadaDestinoFake,
@@ -96,13 +103,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow('A entrega precisa ter um entregador atribuído.');
+                }).toThrow(EntregaWithoutEntregadorError);
             });
 
-            it('deve lançar DomainRuleError quando despachar uma entrega que não está pendente', () => {
+            it('deve lançar EntregaAlreadyDispatchedError quando despachar uma entrega que não está pendente', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CONCLUIDO,
                     destino: coordenadaDestinoFake,
@@ -112,10 +116,7 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.despachar(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow('Apenas entregas com status "PENDENTE" podem ser despachadas.');
+                }).toThrow(EntregaAlreadyDispatchedError);
             });
         });
     });
@@ -186,7 +187,7 @@ describe('Entrega Entity', () => {
         });
 
         describe('Regras de Validação', () => {
-            it('deve lançar DomainRuleError quando atualizar a posição de uma entrega que não está à caminho', () => {
+            it('deve lançar EntregaIsNotOnWayError quando atualizar a posição de uma entrega que não está à caminho', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.PENDENTE,
                     destino: coordenadaDestinoFake,
@@ -196,13 +197,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow('Apenas entregas com status "CAMINHO" podem ser receber atualizações do percurso.');
+                }).toThrow(EntregaIsNotOnWayError);
             });
 
-            it('deve lançar DomainRuleError quando atualizar a posição de uma entrega sem entregador', () => {
+            it('deve lançar EntregaWithoutEntregadorError quando atualizar a posição de uma entrega sem entregador', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CAMINHO,
                     destino: coordenadaDestinoFake,
@@ -211,13 +209,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.atualizarLocalizacaoAtual(coordenadaAtualizacaoFake.latitude, coordenadaAtualizacaoFake.longitude);
-                }).toThrow('A entrega precisa ter um entregador atribuído.');
+                }).toThrow(EntregaWithoutEntregadorError);
             });
 
-            it('deve lançar DomainRuleError quando o deslocamento for insignificante (< 1km)', () => {
+            it('deve lançar EntregaDidNotMoveError quando o deslocamento for insignificante (< 1km)', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CAMINHO,
                     localizacaoAtual: coordenadaOrigemFake,
@@ -229,10 +224,7 @@ describe('Entrega Entity', () => {
                 // Tenta atualizar para a mesma coordenada ou muito perto
                 expect(() => {
                     entrega.atualizarLocalizacaoAtual(coordenadaOrigemFake.latitude, coordenadaOrigemFake.longitude);
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.atualizarLocalizacaoAtual(coordenadaOrigemFake.latitude, coordenadaOrigemFake.longitude);
-                }).toThrow('Não houve atualizações significativas no percurso dessa entrega.');
+                }).toThrow(EntregaDidNotMoveError);
             });
         });
     });
@@ -292,7 +284,7 @@ describe('Entrega Entity', () => {
         });
 
         describe('Regras de Validação', () => {
-            it('deve lançar DomainRuleError quando concluir uma entrega que não está à caminho', () => {
+            it('deve lançar EntregaAlreadyCompletedError quando concluir uma entrega que não está à caminho', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.PENDENTE,
                     destino: coordenadaDestinoFake,
@@ -301,13 +293,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.concluirEntrega();
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.concluirEntrega();
-                }).toThrow('Apenas entregas com status "CAMINHO" pode ser concluídas.');
+                }).toThrow(EntregaAlreadyCompletedError);
             });
 
-            it('deve lançar DomainRuleError quando concluir sem entregador', () => {
+            it('deve lançar EntregaWithoutEntregadorError quando concluir sem entregador', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CAMINHO,
                     destino: coordenadaDestinoFake,
@@ -316,13 +305,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.concluirEntrega();
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.concluirEntrega();
-                }).toThrow('A entrega precisa ter um entregador atribuído.');
+                }).toThrow(EntregaWithoutEntregadorError);
             });
 
-            it('deve lançar DomainRuleError quando concluir uma entrega longe do destino', () => {
+            it('deve lançar EntregaOutsideCompletionRadiusError quando concluir uma entrega longe do destino', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CAMINHO,
                     movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
@@ -335,13 +321,10 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.concluirEntrega();
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.concluirEntrega();
-                }).toThrow('A entrega precisa estar no destino para ser concluída.');
+                }).toThrow(EntregaOutsideCompletionRadiusError);
             });
 
-            it('deve lançar DomainRuleError quando concluir sem comprovante de entrega', () => {
+            it('deve lançar EntregaWithoutProofError quando concluir sem comprovante de entrega', () => {
                 const entrega = new Entrega({
                     status: StatusEntrega.CAMINHO,
                     movimentacoes: [new Movimentacao({ descricao: 'O pedido saiu para entrega!' })],
@@ -354,10 +337,7 @@ describe('Entrega Entity', () => {
 
                 expect(() => {
                     entrega.concluirEntrega();
-                }).toThrow(DomainRuleError);
-                expect(() => {
-                    entrega.concluirEntrega();
-                }).toThrow('A entrega precisa ter um comprovante de entrega.');
+                }).toThrow(EntregaWithoutProofError);
             });
         });
     });

@@ -1,14 +1,22 @@
-import { DomainRuleError } from "../../core/errors/domain-rule.error";
 import { UniqueEntityID } from '../../core/entities/unique-entity-id.entity';
-import { AggregateRoot } from "../../core/entities/aggregate-root";
+import { EntityEvent } from "../../core/entities/entity-event";
+import { StatusEntrega } from "../types/entrega";
 
-import { Movimentacao } from "./movimentacao.entity";
+import { Movimentacao } from "../entities/movimentacao.entity";
 import { Coordenada } from "../value-objects/coordenada.value-object";
 
 import { EntregaDespachadaEvent } from "../events/entrega-despachada.event";
 import { EntregaConcluidaEvent } from "../events/entrega-concluida.event";
 
-import { StatusEntrega } from "../types/entrega";
+import { EntregaAlreadyDispatchedError } from "../errors/entrega-already-dispatched.error";
+import { EntregaWithoutEntregadorError } from '../errors/entrega-without-entregador.error';
+import { EntregaAlreadyCompletedError } from '../errors/entrega-already-completed.error';
+import { EntregaWithoutProofError } from '../errors/entrega-without-proof.error';
+import { EntregaOutsideCompletionRadiusError } from '../errors/entrega-outside-completion-radius.error';
+import { EntregaIsNotOnWayError } from '../errors/entrega-is-not-on-way';
+import { EntregaDidNotMoveError } from '../errors/entrega-did-not-move.error';
+import { EntregaWithoutCurrentLocationError } from '../errors/entrega-without-current-location.error';
+import { EntregaWithoutDestinationError } from '../errors/entrega-without-destination.error';
 
 interface EntregaProps {
     status: StatusEntrega;
@@ -20,7 +28,7 @@ interface EntregaProps {
     entregadorId?: string;
 }
 
-export class Entrega extends AggregateRoot {
+export class Entrega extends EntityEvent {
     private _id: UniqueEntityID;
     private _status: StatusEntrega;
     private _localizacaoAtual?: Coordenada;
@@ -65,10 +73,10 @@ export class Entrega extends AggregateRoot {
 
     public despachar(latitude: number, longitude: number) {
         if (this._status != StatusEntrega.PENDENTE)
-            throw new DomainRuleError('Apenas entregas com status "PENDENTE" podem ser despachadas.');
+            throw new EntregaAlreadyDispatchedError(this._status)
 
         if (!this._entregadorId)
-            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
+            throw new EntregaWithoutEntregadorError();
 
         this._localizacaoAtual = new Coordenada(latitude, longitude);
 
@@ -80,16 +88,17 @@ export class Entrega extends AggregateRoot {
 
     public concluirEntrega() {
         if (this._status != StatusEntrega.CAMINHO)
-            throw new DomainRuleError('Apenas entregas com status "CAMINHO" pode ser concluídas.');
+            throw new EntregaAlreadyCompletedError(this._status);
 
         if (!this._entregadorId)
-            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
+            throw new EntregaWithoutEntregadorError();
 
         if (!this._urlComprovanteEntrega)
-            throw new DomainRuleError('A entrega precisa ter um comprovante de entrega.');
+            throw new EntregaWithoutProofError();
 
-        if (this.calcularDistanciaAtualParaDestino() > 1)
-            throw new DomainRuleError('A entrega precisa estar no destino para ser concluída.');
+        const distanciaAtualParaDestino = this.calcularDistanciaAtualParaDestino();
+        if (distanciaAtualParaDestino > 1)
+            throw new EntregaOutsideCompletionRadiusError(distanciaAtualParaDestino + ' km');
 
         this._localizacaoAtual = new Coordenada(this.destino.latitude, this.destino.longitude);
 
@@ -101,15 +110,15 @@ export class Entrega extends AggregateRoot {
 
     public atualizarLocalizacaoAtual(latitude: number, longitude: number) {
         if (this._status != StatusEntrega.CAMINHO)
-            throw new DomainRuleError('Apenas entregas com status "CAMINHO" podem ser receber atualizações do percurso.');
+            throw new EntregaIsNotOnWayError(this._status);
 
         if (!this._entregadorId)
-            throw new DomainRuleError('A entrega precisa ter um entregador atribuído.');
+            throw new EntregaWithoutEntregadorError();
 
         const coordenada = new Coordenada(latitude, longitude);
 
         if (!this.houveDeslocamentoEntrega(coordenada))
-            throw new DomainRuleError('Não houve atualizações significativas no percurso dessa entrega.');
+            throw new EntregaDidNotMoveError();
 
         this._localizacaoAtual = coordenada;
 
@@ -125,10 +134,10 @@ export class Entrega extends AggregateRoot {
 
     private calcularDistanciaAtualParaDestino() {
         if (!this._localizacaoAtual)
-            throw new DomainRuleError('A localização atual da entrega não foi definida.');
-        
+            throw new EntregaWithoutCurrentLocationError();
+
         if (!this._destino)
-            throw new DomainRuleError('O destino da entrega não foi definido.');
+            throw new EntregaWithoutDestinationError();
 
         return this._localizacaoAtual.calcularDistancia(this._destino);
     }

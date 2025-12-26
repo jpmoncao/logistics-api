@@ -3,7 +3,7 @@ import { BaseUseCase } from "../../core/base/usecase";
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 import { DestinatarioRepository } from "../../domain/repositories/destinatario.repository";
 
-import { Entrega } from "../../domain/entities/entrega.entity";
+import { Entrega } from "../../domain/aggregate/entrega.entity";
 import { Coordenada } from "../../domain/value-objects/coordenada.value-object";
 
 import { StatusEntrega } from "../../domain/types/entrega";

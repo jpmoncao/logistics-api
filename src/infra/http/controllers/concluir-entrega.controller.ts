@@ -35,7 +35,10 @@ export class ConcluirEntregaController extends BaseController {
 
             const file = req.file;
             if (!file)
-                throw new ValidationError('Comprovante (foto) é obrigatório para concluir a entrega.');
+                throw new ValidationError([{
+                    field: 'comprovante',
+                    message: 'A photo of the delivery receipt is required to complete the delivery.'
+                }]);
 
             await this.concluirEntregaUseCase.execute({
                 entregaId: id,

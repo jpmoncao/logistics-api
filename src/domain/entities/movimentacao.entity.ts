@@ -14,7 +14,10 @@ export class Movimentacao {
 
     constructor(props: MovimentacaoProps) {
         if (props.descricao.length < 5) {
-            throw new ValidationError("A descrição da movimentação deve ter no mínimo 5 caracteres.");
+            throw new ValidationError([{
+                field: 'descricao',
+                message: "The description of the transaction must be at least 5 characters long."
+            }]);
         }
 
         this._descricao = props.descricao;

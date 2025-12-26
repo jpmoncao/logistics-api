@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { EntregaRepository } from "../../../../domain/repositories/entrega.repository";
-import { Entrega } from "../../../../domain/entities/entrega.entity";
+import { Entrega } from "../../../../domain/aggregate/entrega.entity";
 import { PrismaEntregaMapper } from "../mappers/prisma-entrega.mapper";
 
 export class PrismaEntregaRepository implements EntregaRepository {

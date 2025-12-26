@@ -18,10 +18,16 @@ export class Coordenada {
 
     private validarCoordendas(latitude: number, longitude: number) {
         if (latitude < -90 || latitude > 90)
-            throw new ValidationError('A latitude deve estar entre -90 e 90.');
+            throw new ValidationError([{
+                field: 'latitude',
+                message: 'The latitude should be between - 90 and 90.'
+            }]);
 
         if (longitude < -180 || longitude > 180)
-            throw new ValidationError('A longitude deve estar entre -180 e 180.');
+            throw new ValidationError([{
+                field: 'longitude',
+                message: 'The longitude must be between -180 and 180.'
+            }]);
     }
 
     public calcularDistancia(para: Coordenada) {

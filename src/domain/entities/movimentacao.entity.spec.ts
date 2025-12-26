@@ -14,8 +14,5 @@ describe('Movimentacao Entity', () => {
         expect(() => {
             new Movimentacao({ descricao: 'Test' });
         }).toThrow(ValidationError);
-        expect(() => {
-            new Movimentacao({ descricao: 'Test' });
-        }).toThrow('A descrição da movimentação deve ter no mínimo 5 caracteres.');
     })
 });

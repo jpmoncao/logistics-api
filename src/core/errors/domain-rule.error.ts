@@ -4,12 +4,13 @@ import { AppError } from "./app-error";
  * Regras de negócio violadas (retorna 400 (Bad Request))
  */
 export class DomainRuleError extends AppError {
-    constructor(message: string) {
+    constructor(title: string = "Domain rule error", message: string = 'There was a business rule error.', type: string = 'generic-domain-rule', extensionMembers?: Record<string, any>) {
         super({
             status: 400,
-            title: "Domain rule error",
+            title,
             detail: message,
-            type: "/errors/generic-domain-rule",
+            type: "/errors/" + type,
+            extensionMembers
         });
     }
 }

@@ -3,7 +3,7 @@ import { ResourceNotFoundError } from "../../core/errors/resource-not-found.erro
 
 import { EntregaCacheRepository, EntregaRepository } from "../../domain/repositories/entrega.repository";
 import { EntregadorRepository } from "../../domain/repositories/entregador.repository";
-import { Entrega } from "../../domain/entities/entrega.entity";
+import { Entrega } from "../../domain/aggregate/entrega.entity";
 
 
 interface BuscarEntregasProximasRequest {

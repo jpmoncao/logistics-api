@@ -2,7 +2,7 @@ import { BaseUseCase } from "../../core/base/usecase";
 import { ResourceNotFoundError } from "../../core/errors/resource-not-found.error";
 
 import { EntregaRepository } from "../../domain/repositories/entrega.repository";
-import { Entrega } from "../../domain/entities/entrega.entity";
+import { Entrega } from "../../domain/aggregate/entrega.entity";
 import { ResourceNotAllowedError } from "../../core/errors/resource-not-allowed.error";
 
 interface ListarHistoricoEntregaRequest {

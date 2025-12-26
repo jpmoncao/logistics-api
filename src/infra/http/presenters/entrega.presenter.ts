@@ -1,4 +1,4 @@
-import { Entrega } from "../../../domain/entities/entrega.entity";
+import { Entrega } from "../../../domain/aggregate/entrega.entity";
 
 interface EntregaHTTP {
     id_entrega: string;

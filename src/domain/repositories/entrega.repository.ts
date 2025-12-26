@@ -1,4 +1,4 @@
-import { Entrega } from "../entities/entrega.entity";
+import { Entrega } from "../aggregate/entrega.entity";
 
 export interface EntregaRepository {
     create(entrega: Entrega): Promise<void>;

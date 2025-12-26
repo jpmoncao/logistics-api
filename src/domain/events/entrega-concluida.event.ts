@@ -1,6 +1,6 @@
 import { DomainEvent } from '../../core/events/domain-event'
 
-import { Entrega } from '../entities/entrega.entity'
+import { Entrega } from '../aggregate/entrega.entity'
 
 interface EntregaConcluidaPayload {
     entregaId: string;
