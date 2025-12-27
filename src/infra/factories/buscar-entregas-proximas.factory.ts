@@ -5,6 +5,7 @@ import { BuscarEntregasProximasController } from "../http/controllers/buscar-ent
 import { prisma } from "../database/prisma/client";
 import { RedisCacheProvider } from "../providers/redis-cache.provider";
 import { RedisEntregaRepository } from "../database/redis/repositories/redis-entregas.repository";
+import { BuscarEntregasProximasProxy } from "../../application/proxies/buscar-entregas-proximas.proxy";
 
 export function buscarEntregasProximasFactory(): BuscarEntregasProximasController {
     // DB Repositories
@@ -15,8 +16,10 @@ export function buscarEntregasProximasFactory(): BuscarEntregasProximasControlle
     const cacheProvider = new RedisCacheProvider();
     const entregaCacheRepository = new RedisEntregaRepository(cacheProvider);
 
-    const usecase = new BuscarEntregasProximasUseCase(entregadorRepository, entregaRepository, entregaCacheRepository);
-    const controller = new BuscarEntregasProximasController(usecase);
+    const realUseCase = new BuscarEntregasProximasUseCase(entregaRepository);
+    const proxy = new BuscarEntregasProximasProxy(realUseCase, entregadorRepository, entregaCacheRepository)
+
+    const controller = new BuscarEntregasProximasController(proxy);
 
     return controller;
 }

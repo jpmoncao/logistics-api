@@ -5,12 +5,12 @@ import { RouteDocsConfig } from '../docs/describe-route';
 import HttpStatusCode from '../utils/status-code';
 
 import { BaseController } from "../../../core/base/controller";
-import { BuscarEntregasProximasUseCase } from "../../../application/use-cases/buscar-entregas-proximas.usecase";
+import { IBuscarEntregasProximasUseCase } from "../../../application/use-cases/buscar-entregas-proximas.usecase";
 import { EntregasProximasPresenter } from "../presenters/entrega-proximas.presenter";
 import { UserRole } from '../../../core/types/user-role';
 
 export class BuscarEntregasProximasController extends BaseController {
-    constructor(private usecase: BuscarEntregasProximasUseCase) { super() }
+    constructor(private usecase: IBuscarEntregasProximasUseCase) { super() }
 
     public docs: RouteDocsConfig = {
         summary: 'Buscar entregas próximas do entregador',
