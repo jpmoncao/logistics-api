@@ -4,17 +4,20 @@ import { AtualizarLocalizacaoEntregaUseCase } from "../../application/use-cases/
 import { AtualizarLocalizacaoEntregaController } from "../http/controllers/atualizar-localizacao-entrega.controller";
 import { RedisCacheProvider } from "../providers/redis-cache.provider";
 import { RedisEntregaRepository } from "../database/redis/repositories/redis-entregas.repository";
+import { AtualizarLocalizacaoEntregaProxy } from "../../application/proxies/atualizar-localizacao-entrega.proxy";
 
 export function atualizarLocalizacaoEntregaFactory(): AtualizarLocalizacaoEntregaController {
     // DB Repository
-    const repository = new PrismaEntregaRepository(prisma);
+    const entregaRepository = new PrismaEntregaRepository(prisma);
 
     // Cache Repository
     const cacheProvider = new RedisCacheProvider();
     const entregaCacheRepository = new RedisEntregaRepository(cacheProvider);
 
-    const useCase = new AtualizarLocalizacaoEntregaUseCase(repository, entregaCacheRepository);
-    const controller = new AtualizarLocalizacaoEntregaController(useCase);
+    const realUseCase = new AtualizarLocalizacaoEntregaUseCase(entregaRepository);
+    const proxy = new AtualizarLocalizacaoEntregaProxy(realUseCase, entregaCacheRepository)
+
+    const controller = new AtualizarLocalizacaoEntregaController(proxy);
 
     return controller;
 }

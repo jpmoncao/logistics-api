@@ -5,12 +5,12 @@ import { RouteDocsConfig } from '../docs/describe-route';
 import HttpStatusCode from '../utils/status-code';
 
 import { BaseController } from '../../../core/base/controller'
-import { AtualizarLocalizacaoEntregaUseCase } from '../../../application/use-cases/atualizar-localizacao-entrega.usecase'
+import { IAtualizarLocalizacaoEntregaUseCase } from '../../../application/use-cases/atualizar-localizacao-entrega.usecase'
 import { atualizarLocalizacaoEntregaBodySchema, atualizarLocalizacaoEntregaParamsSchema } from '../../../application/dtos/atualizar-localizacao-entrega.dto';
 import { UserRole } from '../../../core/types/user-role';
 
 export class AtualizarLocalizacaoEntregaController extends BaseController {
-    constructor(private atualizarLocalizacaoEntregaUseCase: AtualizarLocalizacaoEntregaUseCase) { super() }
+    constructor(private atualizarLocalizacaoEntregaUseCase: IAtualizarLocalizacaoEntregaUseCase) { super() }
 
     public docs: RouteDocsConfig = {
         summary: 'Atualizar a localização atual da entrega',

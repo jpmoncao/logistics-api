@@ -5,17 +5,21 @@ import { ResourceNotAllowedError } from "../../core/errors/resource-not-allowed.
 
 import { StorageGateway } from "../gateways/storage.gateway";
 
-import { EntregaCacheRepository, EntregaRepository } from "../../domain/repositories/entrega.repository";
+import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 
-interface ConcluirEntregaRequest {
+export interface ConcluirEntregaRequest {
     entregaId: string;
     entregadorId: string;
     fileBody: Buffer;
     fileType: string;
 }
 
-export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, void> {
-    constructor(private entregaRepository: EntregaRepository, dispatcher: DomainEventDispatcher, private storage: StorageGateway, private entregaCacheRepository: EntregaCacheRepository) {
+export interface IConcluirEntregaUseCase {
+    execute(request: ConcluirEntregaRequest): Promise<void>;
+}
+
+export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, void> implements IConcluirEntregaUseCase {
+    constructor(private entregaRepository: EntregaRepository, dispatcher: DomainEventDispatcher, private storage: StorageGateway) {
         super(dispatcher);
     }
 
@@ -41,8 +45,6 @@ export class ConcluirEntregaUseCase extends BaseUseCase<ConcluirEntregaRequest, 
         });
 
         await this.entregaRepository.save(entrega);
-
-        await this.entregaCacheRepository.clearByEntregadorId(entrega.entregadorId);
 
         const dispatchedEvents = await this.dispatchEvents(entrega.domainEvents);
         if (dispatchedEvents)

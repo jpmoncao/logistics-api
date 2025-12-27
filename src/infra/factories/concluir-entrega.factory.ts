@@ -10,6 +10,7 @@ import { DiskStorageGateway } from "../gateway/disk-storage.gateway";
 import { EmailQueue } from "../jobs/queues/email.queue";
 import { RedisCacheProvider } from "../providers/redis-cache.provider";
 import { RedisEntregaRepository } from "../database/redis/repositories/redis-entregas.repository";
+import { ConcluirEntregaProxy } from "../../application/proxies/concluir-entrega.proxy";
 
 export function concluirEntregaFactory(): ConcluirEntregaController {
     // Repositories
@@ -31,7 +32,9 @@ export function concluirEntregaFactory(): ConcluirEntregaController {
     const dispatcher = new DomainEventDispatcher();
     dispatcher.register(EntregaConcluidaEvent.eventName, handler.handle);
 
-    const useCase = new ConcluirEntregaUseCase(entregaRepository, dispatcher, storage, entregaCacheRepository);
-    const controller = new ConcluirEntregaController(useCase);
+    const realUseCase = new ConcluirEntregaUseCase(entregaRepository, dispatcher, storage);
+    const proxy = new ConcluirEntregaProxy(realUseCase, entregaCacheRepository);
+
+    const controller = new ConcluirEntregaController(proxy);
     return controller;
 }

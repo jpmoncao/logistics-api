@@ -1,16 +1,20 @@
 import { BaseUseCase } from "../../core/base/usecase";
 import { ResourceNotFoundError } from '../../core/errors/resource-not-found.error'
 
-import { EntregaCacheRepository, EntregaRepository } from "../../domain/repositories/entrega.repository";
+import { EntregaRepository } from "../../domain/repositories/entrega.repository";
 
-interface AtualizarLocalizacaoEntregadorRequest {
+export interface AtualizarLocalizacaoEntregadorRequest {
     entregadorId: string;
     latitude: number;
     longitude: number;
 }
 
-export class AtualizarLocalizacaoEntregadorUseCase extends BaseUseCase<AtualizarLocalizacaoEntregadorRequest, void> {
-    constructor(private entregaRepository: EntregaRepository, private entregaCacheRepository: EntregaCacheRepository) { super(); }
+export interface IAtualizarLocalizacaoEntregadorUseCase {
+    execute(response: AtualizarLocalizacaoEntregadorRequest): Promise<void>
+}
+
+export class AtualizarLocalizacaoEntregadorUseCase extends BaseUseCase<AtualizarLocalizacaoEntregadorRequest, void> implements IAtualizarLocalizacaoEntregadorUseCase {
+    constructor(private entregaRepository: EntregaRepository) { super(); }
 
     async execute({ entregadorId, latitude, longitude }: AtualizarLocalizacaoEntregadorRequest): Promise<void> {
         const entregas = await this.entregaRepository.findAllByEntregadorId(entregadorId);
@@ -21,7 +25,5 @@ export class AtualizarLocalizacaoEntregadorUseCase extends BaseUseCase<Atualizar
             entrega.atualizarLocalizacaoAtual(latitude, longitude);
 
         await this.entregaRepository.saveMany(entregas);
-
-        await this.entregaCacheRepository.clearByEntregadorId(entregadorId);
     }
 }

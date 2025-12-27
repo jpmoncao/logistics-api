@@ -7,12 +7,12 @@ import HttpStatusCode from '../utils/status-code';
 import { BaseController } from '../../../core/base/controller'
 import { ValidationError } from '../../../core/errors/validation.error';
 
-import { ConcluirEntregaUseCase } from '../../../application/use-cases/concluir-entrega.usecase'
+import { IConcluirEntregaUseCase } from '../../../application/use-cases/concluir-entrega.usecase'
 import { concluirEntregaBodySchema, concluirEntregaParamsSchema } from '../../../application/dtos/concluir-entrega.dto';
 import { UserRole } from '../../../core/types/user-role';
 
 export class ConcluirEntregaController extends BaseController {
-    constructor(private concluirEntregaUseCase: ConcluirEntregaUseCase) { super() }
+    constructor(private concluirEntregaUseCase: IConcluirEntregaUseCase) { super() }
 
     public docs: RouteDocsConfig = {
         contentType: 'multipart/form-data',
