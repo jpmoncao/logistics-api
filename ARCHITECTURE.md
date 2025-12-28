@@ -4,7 +4,9 @@ A Clean Architecture (Arquitetura Limpa) foi proposta por Robert C. Martin e con
 Para que essa abordagem funcione, precisamos seguir sua regra fundamental: a Regra de Dependência. Ela dita que as dependências de código só podem apontar para dentro. Ou seja, as camadas internas, como a camada de domínio (regras de negócio), não conhecem e não dependem das camadas externas, como a infraestrutura.
 
 Isso resulta em um sistema fracamente acoplado e altamente coeso. Por isso, conceitos como SRP (Princípio de Responsabilidade Única) e DI (Injeção de Dependência) são vitais para essa arquitetura.
+###
 ![Diagrama Clean Architecture](./.github/clean-architecture.png)
+
 ## Camadas
 ### 1. Infrastructure (Infraestrutura)
 De forma simplificada, esta é a camada do "mundo real". É onde os detalhes técnicos residem: nosso framework web (Express), banco de dados (Prisma/Postgres), serviço de cache (Redis), filas e implementações de envio de e-mail. Ela muda com frequência, mas não deve afetar o coração do sistema.
@@ -17,3 +19,40 @@ Aqui estão as regras de negócio corporativas ("Enterprise Business Rules"). No
 
 ### 4. Core/Shared Kernel (Núcleo)
 Classes abstratas, tipos genéricas e interfaces que são compartilhadas em todas as outras camadas.
+
+## DDD (Domain-Driven Design)
+O DDD é uma abordagem de desenvolvimento que tem como idéia centralizar a camada de domínio no desenvolvimento de software. Elaborada por Eric Evans, ganhou popularidade porque o conceito de **linguagem úbiqua** permite conectar o desenvolvedor com o time de negócio. 
+
+Trazer as regras de negócio para perto do código traz clareza e benefícia a escalabilidade do softaware. Porque usamos uma linguagem universal e as regras de negócio agrupadas em contextos delimitados, chamados de **Bounded Contexts**, esses contextos são delimitadores para cada área da regra de negócio.
+
+Em um exemplo rápido, no DDD, não podemos simplesmente trocar um status da maneira tradicional `this.status = 'CAMINHO';`, o código precisa deixar explícito qual requisito da regra de negócio está sendo resolvido... Isso torna sua entidade rica, não uma entidade anêmica. Quando estamos trocando o status de uma entrega para `CAMINHO` estamos basicamente fazendo um despacho da entrega na regra de negócio. Por isso, deixamos claro: `entrega.despachar();`.
+###
+![Exemplo de código da entidade entrega sendo despachada](./.github/entrega-despachar-code.png)
+
+## Fluxo de dados da API
+Eu apliquei um DDD estratégico com Clean Architecture para estruturar meu software. Quero usar esse tópico para explicar parte do fluxo de dados com alguns diagramas simples.
+
+### Antes de mais nada... E o Over-engineering?
+Está fortemente presente nesse repositório.
+
+Esse repositório foi feito para que eu estudasse aspectos de arquitetura e engenharia de software. Então sim, eu sei que não preciso usar muitos patterns ou conceitos nessa API, mas se eu não usar aqui, nunca vou usar na "vida real"... Talvez essa API não escale ao ponto dos trade-offs valerem a pena, mas está tudo bem. :)
+
+## Padrão HTTP
+O fluxo de entrada da API segue o princípio da dependência unidirecional. O Cliente HTTP acessa uma rota que é interceptada pela Camada de Interface (Controller). Esta, por sua vez, aciona a Camada de Aplicação (Use Case), que orquestra a Camada de Domínio.
+
+Para garantir o desacoplamento, utilizamos rigorosamente o DIP (Dependency Inversion Principle). O Controller depende apenas de abstrações (interfaces) dos Use Cases, e os Use Cases dependem de abstrações dos Repositórios. Isso protege as regras de negócio de mudanças externas e facilita os testes.
+###
+![Diagrama do padrão HTTP](./.github/fluxo-de-dados.png)
+
+### Data Mapper
+Na infraestrutura, utilizo o Prisma ORM, que gera tipos inteligentes baseados no schema do banco de dados (Persistence Models). Embora isso agilize o desenvolvimento, permitir que esses objetos de banco vazem para a aplicação feriria o isolamento do Domínio.
+
+Para resolver isso, apliquei o pattern Data Mapper. Ele atua como uma fronteira de tradução:
+
+- Repository -> Mapper -> Entity: O Mapper recebe os dados crus do Prisma e reconstitui a Entidade de Domínio rica (com métodos e regras).
+
+- Entity -> Mapper -> Repository: O Mapper desmonta a Entidade para o formato que o banco espera salvar.
+
+Dessa forma, a camada de domínio permanece pura e agnóstica à tecnologia de banco de dados.
+###
+![Diagrama do padrão HTTP](./.github/data-mapper.png)
