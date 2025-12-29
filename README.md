@@ -1,8 +1,8 @@
 > Este repositório ainda está em desenvolvimento...
 
-# Logistics API
-### Minhas anotações sobre arquitetura:
-[Clique aqui](https://github.com/jpmoncao/logistics-api/blob/main/ARCHITECTURE.md)
+# Logistics API 
+
+### Minhas anotações sobre arquitetura: [Clique aqui!](https://github.com/jpmoncao/logistics-api/blob/main/ARCHITECTURE.md)
 
 ### Caso de uso:
 - Para estudar arquitetura de software na prática, com conceitos de Clean Architecture, DDD, Clean Code, selecionei um caso de uso de um **setor de logística**.
