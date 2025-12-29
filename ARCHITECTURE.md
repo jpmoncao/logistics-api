@@ -92,3 +92,31 @@ Para resolver isso, utilizamos o padrão de Filas (Queues) com separação entre
 A API responde em milissegundos para o usuário "Entrega concluída com sucesso!", enquanto o processamento real acontece em segundo plano de forma resiliente (com suporte a retries automáticos em caso de falha).
 ###
 ![Diagrama Domain Events](./.github/background-jobs-e-queues.png)
+
+## Caching
+Para otimizar a leitura de dados frequentes (como "Entregas Próximas"), utilizei a estratégia de Cache-aside. Foi implementada uma conexão com o Redis de modo que, sempre que possível, a busca seja realizada primeiramente no cache (latência de milésimos de segundo). Caso a busca não seja bem-sucedida (cache miss), os dados são recuperados no banco MySQL.
+
+### Proxy Pattern
+O Proxy Pattern é um padrão estrutural que intercepta uma operação para realizar verificações ou ações adicionais antes da execução real.
+
+Neste contexto de cache, o pattern se encaixa perfeitamente. A classe BuscarEntregasProxy implementa a mesma interface do Use Case original. Isso nos permite abstrair a lógica de cache por meio de um contrato, tornando o Proxy um substituto transparente para o Controller.
+
+**Fluxo de Execução:**
+- Interceptação: O Controller chama o Proxy acreditando ser o Use Case.
+
+- Verificação (Cache Hit): O Proxy verifica se os dados já existem no Redis. Se sim, retorna imediatamente (Curto-circuito), economizando processamento e I/O de banco de dados.
+
+- Delegação (Cache Miss): Se o cache estiver vazio, o Proxy delega a chamada para o Use Case real.
+
+- Hidratação (Cache Set): O Use Case busca os dados no banco (Prisma) e os retorna para o Proxy. O Proxy, então, salva esses dados no Redis (para futuras requisições) antes de devolver a resposta final ao usuário.
+###
+![Diagrama Domain Events](./.github/proxy-pattern.png)
+
+### Invalidação de Cache
+Para garantir a consistência dos dados (evitando que o usuário veja informações obsoletas), precisamos definir estratégias robustas de invalidação de cache. Invalidar o cache significa remover dados antigos quando ocorrem mudanças no estado da aplicação, forçando uma nova busca no banco de dados na próxima requisição (o que irá "re-hidratar" o cache com dados novos).
+
+**Eu usei as seguintes estratégias:**
+
+- TTL (Time To Live): é um padrão de invalidação baseado no tempo de vida dos dados baseado em segundos.
+  
+- Invalidação por mutação: todas as operações que alteram o banco de dados devem invalidar os dados em cache.
