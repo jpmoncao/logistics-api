@@ -77,3 +77,18 @@ O Use Case vai receber um objeto dispatcher e ao final da operação, o dispatch
 Isso respeita, mais uma vez, os princípios OCP porque nos permite adicionar novos recursos apenas adicionando um novo handler e o SRP porque cada camada conhece o contrato abstrato mas não o como é usado.
 ###
 ![Diagrama Domain Events](./.github/domain-events.png)
+
+## Background Jobs & Queues
+Em operações que dependem de serviços externos (como enviar e-mail via SMTP ou processar pagamentos), não podemos bloquear o thread principal da API enquanto aguardamos uma resposta. Isso causaria lentidão para o usuário final.
+
+Para resolver isso, utilizamos o padrão de Filas (Queues) com separação entre Produtor e Consumidor:
+
+- Handler: O evento SendMail apenas empacota os dados necessários (ex: destinatário, corpo) em um "Job" e o deposita na Email Queue. Essa operação é instantânea.
+  
+- Storage: A fila armazena os jobs, garantindo a persistência caso o serviço caia. Estou usando Redis para isso.
+  
+- Worker: Um processo dedicado (Email Worker), que roda independentemente da API, monitora a fila. Assim que um Job fica disponível, o Worker o captura e executa a integração pesada com o Nodemailer.
+
+A API responde em milissegundos para o usuário "Entrega concluída com sucesso!", enquanto o processamento real acontece em segundo plano de forma resiliente (com suporte a retries automáticos em caso de falha).
+###
+![Diagrama Domain Events](./.github/background-jobs-e-queues.png)
