@@ -56,3 +56,24 @@ Para resolver isso, apliquei o pattern Data Mapper. Ele atua como uma fronteira 
 Dessa forma, a camada de domínio permanece pura e agnóstica à tecnologia de banco de dados.
 ###
 ![Diagrama do padrão HTTP](./.github/data-mapper.png)
+
+## Composition Root
+Esse padrão de arquitetura consiste em criar todas as dependências do grafo em um único lugar, isso é uma boa prática arquitetural, porque incentiva a DI (Dependency Injection) tornando o software fracamente acoplado.
+
+### Factory Pattern
+Como o Creational Design Pattern, usei a metodologia de fábrica, as funções factory instanciam as classes concretas que são chamadas de produto. Os produtos são injetados em cada camada como dependência, uma vez que essas classes já esperavam essas dependências porque foram construídas com os contratos abstratos.
+
+Essa metodologia gera um arquivo factory com muito boilerplate, até porque há apenas instâncias de várias classes nessa camada. Mas o trade-off é a centralização do código de criação, respeitando o SRP (Single Responsability Principle) pois a criação do objeto é separada do uso do objeto e o OCP (Open/Closed Principle) porque, futuramente, ao trocarmos a classe concreta basta alterarmos a instância e pronto, o código permanece funcional.
+###
+![Diagrama Factory Pattern](./.github/factory-pattern.png)
+
+## Domain Events
+O conceito de Domain Events surge da necessidade de desacoplar a regra de negócio principal de seus "efeitos colaterais" (side-effects). Frequentemente, uma ação no núcleo do sistema (como concluir uma entrega) precisa desencadear reações externas (enviar e-mail, notificar via push, gerar logs), mas a Entidade não deve conhecer essas implementações de infraestrutura.
+
+Vamos usar a conclusão de entrega para exemplificar. A Entidade Entrega ao concluir a entrega vai adicionar um novo evento ao array de eventos do domínio (propriedade da classe): `EntregaConcluidaEvent`. Ela é agnóstica a quem vai ouvir esse evento.
+
+O Use Case vai receber um objeto dispatcher e ao final da operação, o dispatcher percorrerá o array de eventos e chamará o handler de cada evento. Cada handler executará uma ação, como no diagrama, envio de email e push notification.
+
+Isso respeita, mais uma vez, os princípios OCP porque nos permite adicionar novos recursos apenas adicionando um novo handler e o SRP porque cada camada conhece o contrato abstrato mas não o como é usado.
+###
+![Diagrama Domain Events](./.github/domain-events.png)
