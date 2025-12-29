@@ -19,14 +19,23 @@ export class BuscarEntregasProximasController extends BaseController {
         response: {
             [HttpStatusCode.OK]: {
                 description: 'Entregas próximas listadas com sucesso.',
-                schema: z.object({
-                    id_entrega: z.uuid(),
-                    distancia: z.string().openapi({ example: '5 km' }),
-                    destino: z.object({
-                        latitude: z.number().min(-90).max(90),
-                        longitude: z.number().min(-180).max(180)
+                schema:
+                    z.object({
+                        localizacaoAtual: z.object({
+                            latitude: z.number().min(-90).max(90),
+                            longitude: z.number().min(-180).max(180)
+                        }),
+                        entregas: z.array(
+                            z.object({
+                                id_entrega: z.uuid(),
+                                distancia: z.string().openapi({ example: '5 km' }),
+                                destino: z.object({
+                                    latitude: z.number().min(-90).max(90),
+                                    longitude: z.number().min(-180).max(180)
+                                })
+                            })
+                        )
                     })
-                })
             }
         }
     };
@@ -35,7 +44,7 @@ export class BuscarEntregasProximasController extends BaseController {
         try {
             const { entregas } = await this.usecase.execute({ entregadorId: req.user.id });
 
-            const entregasPresented = { entregas: EntregasProximasPresenter.toHTTP(entregas) };
+            const entregasPresented = EntregasProximasPresenter.toHTTP(entregas);
 
             return this.ok(res, 'Entregas próximas listadas com sucesso.', entregasPresented);
         } catch (error) {
